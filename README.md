@@ -9,6 +9,34 @@
   <em>"One does not 'read' a graphic; one asks three questions of it."</em> &nbsp;·&nbsp; Bertin, 1967
 </p>
 
+<p align="center">
+  <a href="#-quick-start"><img src="https://img.shields.io/badge/Claude%20Code-skill-d97757?style=flat-square" alt="Claude Code skill"></a>
+  &nbsp;
+  <img src="https://img.shields.io/badge/SKILL.md-265%20lines-555?style=flat-square" alt="SKILL.md size">
+  &nbsp;
+  <img src="https://img.shields.io/badge/references-8%20files-555?style=flat-square" alt="8 reference files">
+  &nbsp;
+  <img src="https://img.shields.io/badge/iteration--1%20pass%20rate-100%25%20vs%2080%25-2ea44f?style=flat-square" alt="Benchmark pass rate">
+  &nbsp;
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License"></a>
+</p>
+
+---
+
+## ℹ️ About
+
+**`data-visualization`** is a [Claude Code](https://claude.com/claude-code) skill — a piece of context that loads into Claude automatically whenever you work on charts, dashboards, maps, infographics, or any quantitative graphic. Once installed, you don't invoke it explicitly; Claude consults it when your task matches and produces advice grounded in two complementary classics of visualization theory.
+
+**What it is, in one paragraph.** A 265-line `SKILL.md` workflow (always loaded when triggered) plus 8 load-on-demand reference files totaling ~2,700 lines. The workflow walks Bertin's encoding grammar (analyze components → match visual variables to perceptual levels) into Tufte's integrity/density/cleanup filter, then resolves into a concrete recommendation. The references go deep where the user's task needs depth — color theory, chart selection, accessibility, modern chart types (post-1983), storytelling, and statistical visualization.
+
+**Who it's for.** Anyone using Claude Code for data work: analysts choosing the right chart for a dataset, engineers reviewing dashboard code, journalists building maps, researchers preparing figures, PMs critiquing a BI tile. Also useful as a study aid for the source books themselves.
+
+**Status.** Built in a single session, tested at one iteration (100% with-skill vs 80% baseline on 4 realistic prompts × 5 graded assertions each), packaged as a 74 KB `.skill` bundle. Stable; no planned roadmap. Issues and PRs welcome if you find a gap.
+
+**Provenance.** Synthesized from Tufte's *The Visual Display of Quantitative Information* (2nd ed., 191 pages) and Bertin's *Semiology of Graphics* (English transl., 462 pages) by chunking each PDF, deploying 6 + 10 parallel reader subagents, and unifying the digests into one workflow. The Anthropic [`skill-creator`](https://github.com/anthropics/claude-code) plugin then handled benchmarking and packaging. Full methodology in the README "Provenance" section below.
+
+**Not affiliated** with Edward Tufte, Graphics Press, ESRI Press, or the Bertin estate. This is a synthesis and study tool; read the originals.
+
 ---
 
 ## ⚡ Quick start
