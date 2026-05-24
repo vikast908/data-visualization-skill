@@ -94,9 +94,13 @@ data-visualization-skill/
 │
 ├── 📁 skill/                              ← the source of truth
 │   ├── SKILL.md                          ← unified workflow (the "always-loaded" doc)
-│   ├── references/
+│   ├── references/                       ← load-on-demand deep dives
 │   │   ├── bertin.md                     ← full grammar (visual variables, image theory, maps, networks)
-│   │   └── tufte.md                      ← full canon (Lie Factor, data-ink, chartjunk, examples)
+│   │   ├── tufte.md                      ← full canon (Lie Factor, data-ink, chartjunk, named examples)
+│   │   ├── color.md                      ← viridis/ColorBrewer/Okabe-Ito, OKLCH, dark mode, CVD safety
+│   │   ├── chart-picker.md               ← decision tree: by question, by data shape, common wrong picks
+│   │   ├── accessibility.md              ← WCAG, color-blind palettes, alt text, screen readers, motion
+│   │   └── modern-charts.md              ← post-1983: beeswarm, raincloud, sankey, treemap, slopegraph, etc.
 │   └── evals/
 │       ├── evals.json                    ← 4 test cases with 5 graded assertions each
 │       └── trigger_eval_set.json         ← 20 queries for description-trigger optimization

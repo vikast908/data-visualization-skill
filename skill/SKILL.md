@@ -240,12 +240,20 @@ Useful one-liners from each:
 - "For non-data-ink, less is more. For data-ink, less is a bore." (p. 168)
 - "It is better to violate any principle than to place graceless or inelegant marks on paper." (p. 184)
 
-## Deeper material
+## Deeper material — load on demand
 
-- `references/bertin.md` — the full grammar: eight visual variables in depth, image theory, matrix permutation, the diagrams/networks/maps taxonomy, projections, generalization, base maps, the three functions of graphics.
-- `references/tufte.md` — the full Tufte canon: Lie Factor catalogue, data-ink redesigns, chartjunk taxonomy, small multiples, named examples (Minard, Snow, Anscombe, Playfair, Marey, Connecticut speeding, NYT lies), and an indexed list of quotes by theme.
+Read these only when the user's task touches the topic. Don't preload everything.
 
-Cite by author when the citation sharpens the critique. Don't drown the user in attribution.
+| File | Read when… |
+| --- | --- |
+| `references/bertin.md` | The task needs the full grammar — visual-variable selection beyond the SKILL.md table, image theory, matrix permutation, networks, projections, cartographic generalization. |
+| `references/tufte.md` | The task needs the full canon — the Lie Factor catalogue, data-ink redesigns, chartjunk taxonomy, small multiples, named examples (Minard, Snow, Anscombe, Playfair, Marey, Connecticut speeding, NYT lies), or quotes by theme. |
+| `references/color.md` | The user is choosing a palette, asking about color, has a rainbow/jet colormap, is building for color-blind users, or is moving to dark mode. Covers viridis family, ColorBrewer, Okabe-Ito, OKLCH, diverging anchoring, dark mode. |
+| `references/chart-picker.md` | The user asks "what chart should I use?" or describes data and asks for the right form. A decision tree indexed by question and by data shape, plus common wrong picks and what to use instead. |
+| `references/accessibility.md` | The user is shipping to production, asks about color-blind safety, alt text, screen readers, contrast ratios, dark mode, or animation/motion concerns. |
+| `references/modern-charts.md` | The user mentions or considers a chart type post-1983: beeswarm, raincloud, ridgeline, sankey, treemap, calendar heatmap, hex bins, parallel coordinates, slopegraph, bump chart, waffle, bullet, violin, streamgraph, sparkline. Or asks whether a trendy form is the right pick. |
+
+Cite by author/source when the citation sharpens the critique. Don't drown the user in attribution.
 
 ## Closing test
 
