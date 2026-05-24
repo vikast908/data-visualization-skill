@@ -252,6 +252,8 @@ Read these only when the user's task touches the topic. Don't preload everything
 | `references/chart-picker.md` | The user asks "what chart should I use?" or describes data and asks for the right form. A decision tree indexed by question and by data shape, plus common wrong picks and what to use instead. |
 | `references/accessibility.md` | The user is shipping to production, asks about color-blind safety, alt text, screen readers, contrast ratios, dark mode, or animation/motion concerns. |
 | `references/modern-charts.md` | The user mentions or considers a chart type post-1983: beeswarm, raincloud, ridgeline, sankey, treemap, calendar heatmap, hex bins, parallel coordinates, slopegraph, bump chart, waffle, bullet, violin, streamgraph, sparkline. Or asks whether a trendy form is the right pick. |
+| `references/storytelling.md` | The user is writing a report, building a deck, designing a dashboard headline, or asking how to make a chart "land." Covers takeaway titles, the headline-and-deck pattern, annotation patterns, visual hierarchy, chart sequencing, and the opinion-of-the-chart. |
+| `references/statistical-viz.md` | The work touches uncertainty (error bars, CIs, prediction intervals), A/B tests, distribution comparison beyond shape, regression diagnostics, survival curves, ROC/PR, Bayesian posteriors, or p-value display. The skill's modern-statistics supplement. |
 
 Cite by author/source when the citation sharpens the critique. Don't drown the user in attribution.
 

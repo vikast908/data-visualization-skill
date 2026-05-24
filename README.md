@@ -84,6 +84,32 @@ The skill was evaluated against a non-skill baseline on 4 realistic prompts (coh
 
 ---
 
+## 👀 See the skill in action
+
+Two excerpts from actual iteration-1 responses (with the skill loaded). Both are real outputs to real prompts — no curation beyond trimming.
+
+### Asked: *"Should I use Jenks or quantiles for my COVID choropleth?"*
+
+> Short answer: **your editor is right for the wrong reason, and you're wrong for the right reason.** For this specific article, use **neither as your default** — use a perceptually-uniform sequential scale with a small number of fixed, meaningful breakpoints (e.g., 0, 5k, 10k, 20k, 30k, 40k+ per 100k).
+>
+> Your headline is "America's hardest-hit counties." That is a **message graphic** (Bertin's term) — memorizable, one-glance, communicating a known finding. Not a discovery graphic. That matters because Jenks optimizes within-class homogeneity — change the dataset and the breaks move. Readers comparing your map to anyone else's see different geographies. Quantiles guarantee equal-area color usage; the map will *always* look dramatic, even if COVID had been uniformly mild, because the top quintile is by construction the top 20%. That's the editor's "honest" intuition backwards.
+>
+> Choropleths take a quantitative variable and convert it into an ordered one. Bertin calls this *"transforming Q into O"* — fine for *communication* of a known message, dishonest for *discovery*. Since you're communicating a known message, you've earned the right to bin — but bin on **meaningful thresholds**, not on the shape of your sample.
+>
+> *[…continues with a comparison table, a "what to ship" checklist including a histogram strip under the legend, and a one-paragraph script for talking the editor through it]*
+
+### Asked: *"How should I lay out a customer-success dashboard?"*
+
+> CS isn't asking "what's our average NPS?" — they're asking "**which 15 of these 500 accounts should I call this week?**" That's a Bertin **processing** task (find anomalies in a population), not a **message** task (communicate a known KPI). Almost every Looker dashboard built for this gets it wrong by leading with tiles ("Avg NPS: 42", "Total MRR: $2.4M") that tell you nothing about which account to open.
+>
+> So the dashboard is **one big sorted table with sparklines**, supported by two diagnostic charts. Not six KPI tiles across the top.
+>
+> *[…proceeds to specify columns left-to-right with explicit Bertin-grounded encoding rationale per column ("risk score: 6-cell heat strip, light gray → dark gray, never red/green as the only channel"), a renewal-risk scatter for the panic-zone view, small multiples of NPS trend by MRR tier, and a transparent risk-score formula]*
+
+Both responses are full-length in `benchmarks-iteration-1/eval-3_choropleth-classification/with_skill/outputs/response.md` and `eval-4_cs-dashboard/with_skill/outputs/response.md`. Compare to the matching `without_skill/` versions to see the delta.
+
+---
+
 ## 🗂️ Repository layout
 
 ```
@@ -100,7 +126,9 @@ data-visualization-skill/
 │   │   ├── color.md                      ← viridis/ColorBrewer/Okabe-Ito, OKLCH, dark mode, CVD safety
 │   │   ├── chart-picker.md               ← decision tree: by question, by data shape, common wrong picks
 │   │   ├── accessibility.md              ← WCAG, color-blind palettes, alt text, screen readers, motion
-│   │   └── modern-charts.md              ← post-1983: beeswarm, raincloud, sankey, treemap, slopegraph, etc.
+│   │   ├── modern-charts.md              ← post-1983: beeswarm, raincloud, sankey, treemap, slopegraph, etc.
+│   │   ├── storytelling.md               ← takeaway titles, annotation patterns, hierarchy, narrative
+│   │   └── statistical-viz.md            ← uncertainty, CIs, A/B tests, forest plots, survival, ROC/PR
 │   └── evals/
 │       ├── evals.json                    ← 4 test cases with 5 graded assertions each
 │       └── trigger_eval_set.json         ← 20 queries for description-trigger optimization
