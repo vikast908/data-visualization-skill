@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "data-visualization", "runs": [{"id": "eval-1_cohort-retention-with_skill", "prompt": "I'm a data engineer at a SaaS company visualizing churn for our finance team's monthly board deck. I have 24 monthly signup cohorts \u00c3\u2014 12 observation months \u00e2\u20ac\u201d it's triangular because cohort N can only be observed for 12-N months. I was going to do a heatmap but our designer wants 'something more polished'. What chart should I use?", "eval_id": 1, "outputs": [{"name": "response.md", "type": "text", "content": "Drop the heatmap. It's the wrong *function* for a board deck.\n\nHeatmaps are a recording graphic \u00e2\u20ac\u201d they let an analyst scan 288 cells looking for anomalies. A board deck needs a communicating graphic: one image, one glance, one takeaway. Also, your retention rate is quantitative, but heatmap shading (Bertin's \"value\") only encodes order \u00e2\u20ac\u201d the CFO can see \"darker = worse\" but not \"Q3 2024 is 1.4x better than Q3 2023.\" The triangle of empty cells is the giveaway that the format is fighting the data.\n\n**Ship this instead: small-multiple retention curves, grouped by quarter.**\n\n- 8 panels (one per signup quarter, 2024 Q1 \u00e2\u2020\u2019 2025 Q4), arranged 2\u00c3\u20144 or 4\u00c3\u20142.\n- X = months since signup (0\u00e2\u20ac\u201c12), Y = % retained.\n- Each panel shows the 3 monthly cohorts in that quarter as thin gray lines, with the quarter's average overlaid darker.\n- Identical axes across all panels \u00e2\u20ac\u201d that's what makes the eye see the trend.\n- The triangular-data problem vanishes: recent cohorts just have shorter curves. No empty cells, no awkward void.\n\nPosition encodes the quantitative retention rate honestly (Bertin: Q needs position, size, or value; position is the only one that supports ratio reading). Small multiples carry the time dimension without overloading any single panel. Your designer gets something that looks composed rather than computed.\n\n**Then add a 5-column table beneath the panels:**\n\n| Cohort quarter | n signups | M1 | M3 | M6 | M12 |\n\nEight rows, ~40 numbers \u00e2\u20ac\u201d under Tufte's \"table beats chart for \u00e2\u2030\u00a420 numbers\" threshold per row group, and it gives the board the exact figures they'll want to quote. The chart shows the shape; the table delivers the numbers. This is the semi-graphic pattern and it's almost always what finance teams actually want.\n\n**If you only have space for one image**, do this single panel instead: all 24 monthly cohort curves overlaid, the oldest 20 in light gray (#CCC), the most recent 4 in a saturated color, labeled directly at the right end of each line. No legend. Range-framed axes. One sentence as title: \"Month-6 retention has improved from 62% to 74% over the last year\" \u00e2\u20ac\u201d or whatever the actual finding is. That's Tufte's \"data graphics are paragraphs about data.\"\n\n**A few things to avoid as you build it:**\n\n- No rainbow colormap on the heatmap if your designer insists on keeping it \u00e2\u20ac\u201d viridis or a single-hue sequential at minimum, but you'll still have the function-mismatch problem.\n- Don't stack-area the cohorts. Only the bottom series has a real baseline.\n- No 3-D anything. No gradient fills behind the curves.\n- Y-axis: 0\u00e2\u20ac\u201c100%, not auto-scaled to 60\u00e2\u20ac\u201c80%, or the improvement will look like a Lie-Factor cliff.\n- Annotate one or two real events on the curves (pricing change, churn-save program launch) \u00e2\u20ac\u201d that's what makes finance trust the chart.\n\nThe heatmap isn't wrong, it's just answering the wrong question. Heatmaps answer \"where are the anomalies?\" Boards ask \"is it getting better?\" Retention curves answer that in one glance.\n"}], "grading": null}, {"id": "eval-1_cohort-retention-without_skill", "prompt": "I'm a data engineer at a SaaS company visualizing churn for our finance team's monthly board deck. I have 24 monthly signup cohorts \u00c3\u2014 12 observation months \u00e2\u20ac\u201d it's triangular because cohort N can only be observed for 12-N months. I was going to do a heatmap but our designer wants 'something more polished'. What chart should I use?", "eval_id": 1, "outputs": [{"name": "response.md", "type": "text", "content": "# Cohort retention for a board deck \u00e2\u20ac\u201d what to use instead of a heatmap\n\nShort answer: **don't replace the heatmap, redesign it, and pair it with one summary line chart.** For a board deck, the combo that reads best is:\n\n1. A **retention curves overlay** (small set of cohorts as lines, x = months since signup) as the hero chart.\n2. A **polished triangular table-heatmap** (numbers in cells, color as a secondary encoding) below or on the facing page as the reference.\n\nSkip the standalone heatmap-as-hero. Heatmaps are great for *you* to spot patterns in 24x12 grids; they're poor for a finance audience that wants to read a number and a trend in 5 seconds.\n\n---\n\n## Why the plain heatmap fails for this audience\n\n- Triangular missingness looks like a bug to non-analysts (\"why is the bottom half empty?\").\n- Color-to-percentage decoding is slow and imprecise \u00e2\u20ac\u201d board members will ask \"what's the number?\" anyway.\n- 24 rows is too many to label cleanly on a slide; you end up with unreadable y-axis ticks.\n- Sequential color ramps compress the interesting range (most retention action happens between 60\u00e2\u20ac\u201c95%, but the ramp spans 0\u00e2\u20ac\u201c100%).\n\n## Option A (recommended hero): Retention curves, overlaid, with cohort highlighting\n\n- X-axis: months since signup (0\u00e2\u20ac\u201c11).\n- Y-axis: % retained.\n- One line per cohort, but **don't draw all 24**. Draw them in three tiers:\n  - **Gray, thin, low-opacity** for the 20 \"context\" cohorts.\n  - **Two or three colored, thick lines** for the cohorts that tell the story (e.g., oldest complete cohort, the cohort right before a pricing/product change, most recent cohort with >=3 months of data).\n  - Label those colored lines directly at the right end \u00e2\u20ac\u201d no legend.\n- Add a **median or \"typical cohort\" line** in a distinct neutral (dark gray, dashed) as the benchmark.\n- Annotate one or two inflection points in plain English (\"Self-serve onboarding launched \u00e2\u20ac\u201d Aug 2024 cohort retains 8pts higher at M3\").\n\nThis is the chart that answers the board's actual question: *\"Is retention getting better or worse, and by how much?\"* The triangular structure disappears entirely because every cohort starts at month 0.\n\nVariations worth considering:\n- **Cohort age vs. retention, colored by cohort vintage on a continuous scale** (light = old, dark = new, or vice versa). Reads as a \"fan\" \u00e2\u20ac\u201d if newer cohorts sit above older ones, retention is improving; you see it instantly.\n- **Small multiples** (4 rows x 6 cols of mini line charts, one per cohort). Good if the designer wants editorial polish and you have a full page. Each panel is tiny, no axes repeated, shared y-scale, with the cohort label and the M3/M6/M12 retention number printed in the corner.\n\n## Option B (recommended companion): Polished triangular table\n\nTreat it as a **table first, color second** \u00e2\u20ac\u201d this is the Tufte-style move and what designers usually mean by \"polished\":\n\n- Print the actual retention number in every cell (e.g., `87`, no `%` sign, right-aligned, tabular numerals).\n- Use a **muted, narrow-range color scale** (e.g., a single hue from white to a brand color, mapped to the 60\u00e2\u20ac\u201c100% range, not 0\u00e2\u20ac\u201c100%). Don't use red-green diverging \u00e2\u20ac\u201d finance will read that as good/bad and it'll dominate.\n- Leave the lower triangle truly empty (no gray fill, no \"N/A\"). The diagonal edge is information.\n- Bold the diagonal (month 0 = 100%) or omit it entirely \u00e2\u20ac\u201d it's noise.\n- Add a **right-margin column** with the cohort size (N) in light gray. Board will ask.\n- Add a **bottom row** with the average retention at each month-since-signup across all cohorts that have reached it \u00e2\u20ac\u201d this is the \"average curve\" reference.\n- Group cohort rows in quarters with a hairline separator every 3 rows; label the quarter on the left (\"Q1 2024\", \"Q2 2024\"...). Makes 24 rows scannable.\n\n## Option C (only if you have one big story): Layer cake / stacked area\n\nIf churn itself is the headline (not retention by cohort age), a **stacked area where each band is a signup cohort and height = active customers in that calendar month** is very effective. X-axis is calendar time, not cohort age. The triangular issue vanishes because you're looking at the present-day stack, and the board sees total active customers + the contribution of each vintage. Pair with a single churn-rate line on a secondary axis. This answers \"are we growing net of churn?\" rather than \"how does each cohort behave?\"\n\n## Concrete recommendation for the deck\n\nSlide structure:\n- **Hero chart**: Option A (retention curves overlay), one sentence headline like *\"Cohorts since the Q3 onboarding revamp retain ~8pts better at month 3.\"*\n- **Reference table**: Option B (triangular table-heatmap), smaller, captioned *\"Monthly retention by signup cohort. Cells are % of cohort still active.\"*\n- **Footnote**: cohort definition, what counts as \"retained\" (logged in? paid? non-zero usage?), and N per cohort.\n\n## Implementation notes\n\n- **Tooling**: If you're in Python, Plotly or Altair both do the overlay cleanly; matplotlib is fine but you'll hand-roll the direct labels. For the table-heatmap, `great_tables` (Python) or `gt` (R) give you typography-grade output that actually looks like a board-deck table, not a Jupyter screenshot. Avoid seaborn's default heatmap \u00e2\u20ac\u201d it screams \"analyst notebook.\"\n- **Color**: pick one brand hue, two tints. Don't use viridis on a board deck.\n- **Typography**: tabular/lining figures, right-aligned numbers, no gridlines inside the table.\n- **Export**: render to SVG or high-DPI PNG. Match the deck's font (almost always not the chart library default).\n- **Smoothing**: don't. Cohort retention has real month-to-month structure (billing cycles, seasonality) \u00e2\u20ac\u201d smoothing hides it and finance will notice.\n\n## One thing to push back on with the designer\n\n\"Polished\" sometimes means \"fewer numbers.\" For a finance board deck, resist that. The hero chart should be visual; the companion table should have every number visible. Boards trust tables; they tolerate charts.\n"}], "grading": null}, {"id": "eval-2_3d-bar-critique-with_skill", "prompt": "Review this matplotlib code for our weekly active users chart on the exec dashboard. It's a 3D bar chart with weeks on X, product (Web/iOS/Android) on Y, and DAU on Z, with a rainbow colormap. Any problems?\n\n```python\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nfig = plt.figure(figsize=(8, 6))\nax = fig.add_subplot(111, projection='3d')\n\nweeks = np.arange(13)\nproducts = ['Web', 'iOS', 'Android']\nxs, ys = np.meshgrid(weeks, range(3))\nax.bar3d(xs.flatten(), ys.flatten(), 0,\n         0.8, 0.8, dau.flatten(), cmap='rainbow')\nax.set_xlabel('WEEK')\nax.set_ylabel('PRODUCT')\nax.set_zlabel('DAILY ACTIVE USERS')\nax.set_title('WEEKLY ACTIVE USERS')\nplt.show()\n```", "eval_id": 2, "outputs": [{"name": "response.md", "type": "text", "content": "# Review: 3D bar chart of Weekly Active Users\n\nShort answer: scrap the 3D bar chart. It's the textbook anti-pattern for this exact data \u00e2\u20ac\u201d and the code on top of it has three more problems that would bite you even if 3D were OK.\n\n## The structural problems (why no amount of polish saves this)\n\n**1. 3D bars on a 2D screen lie about the numbers.**\nYou have a Q (quantitative) component \u00e2\u20ac\u201d DAU \u00e2\u20ac\u201d and you're encoding it as the height of a bar drawn in projected perspective. Bars in the back row are foreshortened, bars in the front row are not, and bars in the middle row are partially occluded by the front row. Two bars that read the same value can render as visibly different heights depending only on where they sit on the Y axis. Tufte's Lie Factor target is 0.95\u00e2\u20ac\u201c1.05; perspective 3D blows past that as a property of the projection itself, not of your data. He's blunt: flatten. Bertin would say the same in different words \u00e2\u20ac\u201d you've spent a planar dimension (depth) on something that adds no information, and you've made the one variable that *must* be quantitative (height) unreadable as a ratio.\n\n**2. Three components on a single 3D image violates Bertin's image limit, badly.**\nBertin's rule: at most three components can live in a single \"image\" graspable in one glance, and the third must be an ordered retinal variable, not a third spatial axis. You have:\n- Week (O, length 13) \u00e2\u20ac\u201d needs an axis\n- Product (\u00e2\u2030\u00a0, length 3) \u00e2\u20ac\u201d needs categorical separation\n- DAU (Q) \u00e2\u20ac\u201d needs position or length\n\nThat's two axes and a length. The natural construction is 2D: weeks on X, DAU on Y, three lines (or three small-multiple panels) for product. You don't need a third spatial dimension; you have only three products.\n\n**3. `cmap='rainbow'` on `bar3d` is wrong twice over.**\n- `bar3d` does not actually accept a `cmap` kwarg the way you've written it \u00e2\u20ac\u201d it'll either ignore it or color every bar the same. So whatever you *think* the colors mean, they don't mean it.\n- Even if it worked, rainbow is the worst choice for a quantity: hue has no perceptual order (Bertin: color is selective but not ordered, and not quantitative at all). Viewers cannot rank rainbow colors by value without consulting the legend. For quantity, use position or length \u00e2\u20ac\u201d which is what bar height already is \u00e2\u20ac\u201d so the colormap is redundant *and* misleading.\n\n**4. `dau` is never defined in the snippet.** Minor, but `dau.flatten()` will NameError. I'll assume it's a `(3, 13)` array.\n\n**5. Title says \"Weekly Active Users\", Z-axis says \"Daily Active Users\".** Pick one. WAU and DAU are different KPIs and an exec dashboard is exactly where that gets caught and damages trust.\n\n**6. ALL CAPS labels.** Tufte calls these the \"computer duck\" \u00e2\u20ac\u201d they read slower and add nothing. Use mixed case.\n\n## A few smaller code issues\n- `figsize=(8, 6)` is roughly 1.33 \u00e2\u20ac\u201d fine, but for a time-series 1.5+ wider than tall reads better.\n- No units, no source, no `n`, no date range on the caption. An exec chart without \"compared to what?\" is incomplete.\n- Y-axis tick labels for products aren't set \u00e2\u20ac\u201d you'd get `0, 1, 2` instead of `Web, iOS, Android`.\n\n## What to draw instead\n\nFor 3 products \u00c3\u2014 13 weeks \u00c3\u2014 1 quantity, the right construction is a **small multiple of range-framed line charts** (one panel per product, shared Y scale so they're comparable), or a **single line chart with three directly-labeled lines** if the values don't overlap badly. Either one is a true Bertin \"image\" \u00e2\u20ac\u201d graspable in a glance \u00e2\u20ac\u201d and has Lie Factor ~1.0.\n\n```python\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n# dau shape: (3 products, 13 weeks)\nweeks = np.arange(1, 14)\nproducts = ['Web', 'iOS', 'Android']\ncolors = ['#444444', '#1f77b4', '#d62728']  # neutral + two distinct hues\n\nfig, ax = plt.subplots(figsize=(9, 5))\n\nfor i, name in enumerate(products):\n    ax.plot(weeks, dau[i], color=colors[i], linewidth=1.8)\n    # Direct label at line end \u00e2\u20ac\u201d no legend box\n    ax.text(weeks[-1] + 0.15, dau[i, -1], name,\n            color=colors[i], va='center', fontsize=10)\n\n# Range frame: trim spines to data, drop top/right\nax.spines['top'].set_visible(False)\nax.spines['right'].set_visible(False)\nax.spines['left'].set_bounds(dau.min(), dau.max())\nax.spines['bottom'].set_bounds(weeks[0], weeks[-1])\n\n# Real data values as ticks, not round numbers\nax.set_yticks([dau.min(), np.median(dau), dau.max()])\nax.set_yticklabels([f'{int(v):,}' for v in\n                    [dau.min(), np.median(dau), dau.max()]])\nax.set_xticks([weeks[0], weeks[-1]])\n\nax.set_ylabel('Weekly active users')\nax.set_title('Weekly active users by product, last 13 weeks')\nfig.text(0.01, 0.01, 'Source: internal analytics. n = WAU per ISO week.',\n         fontsize=8, color='gray')\n\nplt.tight_layout()\nplt.show()\n```\n\nIf the three lines cross or overlap (common when one product dwarfs the others), switch to small multiples:\n\n```python\nfig, axes = plt.subplots(1, 3, figsize=(11, 3.5), sharey=True)\nfor ax, name, series in zip(axes, products, dau):\n    ax.plot(weeks, series, color='#333', linewidth=1.6)\n    ax.set_title(name, loc='left', fontsize=11)\n    ax.spines['top'].set_visible(False); ax.spines['right'].set_visible(False)\n    ax.set_xticks([weeks[0], weeks[-1]])\nfig.suptitle('Weekly active users, last 13 weeks', x=0.02, ha='left')\nfig.tight_layout()\n```\n\n## The dashboard-level point\n\nAn exec dashboard's job is usually **processing** in Bertin's sense \u00e2\u20ac\u201d leadership scans for anomalies, trends, and inflection points. A 3D bar chart optimizes for none of that: it's a \"message\" form (memorable, decorative) used for a \"processing\" task. The line panel above lets the exec answer \"which product is growing, which is flat, which dipped, and when?\" in one glance \u00e2\u20ac\u201d which is the whole point.\n\nOne more thing worth adding for execs: a one-line text annotation on the chart calling out the most important event (\"iOS launched v4.2 in week 8\") does more work than any color choice.\n"}], "grading": null}, {"id": "eval-2_3d-bar-critique-without_skill", "prompt": "Review this matplotlib code for our weekly active users chart on the exec dashboard. It's a 3D bar chart with weeks on X, product (Web/iOS/Android) on Y, and DAU on Z, with a rainbow colormap. Any problems?\n\n```python\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nfig = plt.figure(figsize=(8, 6))\nax = fig.add_subplot(111, projection='3d')\n\nweeks = np.arange(13)\nproducts = ['Web', 'iOS', 'Android']\nxs, ys = np.meshgrid(weeks, range(3))\nax.bar3d(xs.flatten(), ys.flatten(), 0,\n         0.8, 0.8, dau.flatten(), cmap='rainbow')\nax.set_xlabel('WEEK')\nax.set_ylabel('PRODUCT')\nax.set_zlabel('DAILY ACTIVE USERS')\nax.set_title('WEEKLY ACTIVE USERS')\nplt.show()\n```", "eval_id": 2, "outputs": [{"name": "response.md", "type": "text", "content": "Short version: there are a few real bugs, and the chart type itself is the wrong tool for the job. I'd scrap the 3D bar approach for an exec dashboard and use small multiples or a slope/line chart.\n\n## Bugs in the code as written\n\n1. **`bar3d` does not accept `cmap`.** It silently ignores it and renders every bar the same default blue. You have to compute colors yourself and pass them via the `color=` argument as an array.\n2. **`dau` is never defined.** The snippet will `NameError` before it draws anything. Whatever produces `dau` must be a `(3, 13)` array matching the meshgrid shape.\n3. **Meshgrid / shape mismatch risk.** `np.meshgrid(weeks, range(3))` returns shape `(3, 13)`. If `dau` is stored `(13, 3)` (weeks-by-product, which is the natural data layout), `dau.flatten()` will misalign bars with products. You'll get a plausible-looking but wrong chart - dangerous on an exec dashboard.\n4. **Title says \"WEEKLY ACTIVE USERS\" but Z-axis says \"DAILY ACTIVE USERS\".** WAU and DAU are different metrics. Pick one.\n5. **X-axis shows 0-12, not week labels.** No `set_xticks` / `set_xticklabels`, so execs see integers instead of week numbers or dates.\n6. **Y-axis shows 0, 1, 2, not Web/iOS/Android.** Same issue - no `set_yticks(...); set_yticklabels(products)`.\n7. **Bar width of 0.8 in Y with only 3 categories** is fine, but combined with the 3D projection the front row will occlude the back row for any week where the back product is shorter. You will literally lose data behind other bars.\n\n## Why I'd redesign, not patch\n\n3D bar charts have well-known problems that matter more on an exec dashboard than in exploratory work:\n\n- **Occlusion**: bars hide other bars. The viewer cannot read values they cannot see.\n- **No shared baseline**: comparing heights across the Y dimension requires the eye to mentally project across a tilted plane. People are bad at this.\n- **Perspective distortion**: a bar in the back looks shorter than an equal bar in the front.\n- **Rainbow colormap**: not perceptually uniform, not colorblind-safe, and here it would be encoding a value (height) that's already encoded by height - redundant and misleading because rainbow implies ordering that doesn't match the data.\n- **Tick labels and rotation** in 3D are fiddly and often unreadable at dashboard sizes.\n\nFor \"WAU by product over 13 weeks\" you have 3 series x 13 points = 39 values. That's a line chart's home turf.\n\n## Recommended replacement\n\n```python\nimport matplotlib.pyplot as plt\nimport numpy as np\n\n# wau shape: (n_weeks, n_products), e.g. (13, 3)\nweeks = np.arange(1, 14)\nproducts = ['Web', 'iOS', 'Android']\ncolors = {'Web': '#1f77b4', 'iOS': '#2ca02c', 'Android': '#d62728'}\n\nfig, ax = plt.subplots(figsize=(9, 5))\nfor i, p in enumerate(products):\n    ax.plot(weeks, wau[:, i], marker='o', color=colors[p], label=p, linewidth=2)\n    # label-at-end pattern beats a legend for 3 series\n    ax.text(weeks[-1] + 0.2, wau[-1, i], p, color=colors[p],\n            va='center', fontweight='bold')\n\nax.set_xlabel('Week')\nax.set_ylabel('Weekly Active Users')\nax.set_title('Weekly Active Users by Product (last 13 weeks)')\nax.set_xticks(weeks)\nax.spines['top'].set_visible(False)\nax.spines['right'].set_visible(False)\nax.grid(axis='y', alpha=0.3)\nax.margins(x=0.02)\nfig.tight_layout()\nplt.show()\n```\n\nThis gives you: shared baseline, no occlusion, trend visible at a glance, week-over-week deltas readable, and labels where the eye already is (end of each line) so no legend lookup.\n\n## If you must keep the 3D bar (e.g. stakeholder insists)\n\nMinimum fixes:\n\n```python\nimport matplotlib.pyplot as plt\nfrom matplotlib import cm\nfrom matplotlib.colors import Normalize\nimport numpy as np\n\nweeks = np.arange(13)\nproducts = ['Web', 'iOS', 'Android']\n\n# assume wau shape (13, 3); transpose to (3, 13) to match meshgrid\nz = wau.T\n\nxs, ys = np.meshgrid(weeks, np.arange(len(products)))\nxs, ys, zs = xs.flatten(), ys.flatten(), z.flatten()\n\nnorm = Normalize(vmin=zs.min(), vmax=zs.max())\ncolors = cm.viridis(norm(zs))  # perceptually uniform, not rainbow\n\nfig = plt.figure(figsize=(10, 6))\nax = fig.add_subplot(111, projection='3d')\nax.bar3d(xs - 0.4, ys - 0.4, 0, 0.8, 0.8, zs, color=colors, shade=True)\n\nax.set_xticks(weeks)\nax.set_xticklabels([f'W{w+1}' for w in weeks], rotation=45)\nax.set_yticks(range(len(products)))\nax.set_yticklabels(products)\nax.set_xlabel('Week')\nax.set_ylabel('Product')\nax.set_zlabel('Weekly Active Users')\nax.set_title('Weekly Active Users by Product')\nax.view_init(elev=25, azim=-60)  # tune to minimize occlusion\nplt.tight_layout()\nplt.show()\n```\n\nBut again - for an exec dashboard, the line-chart version will be read correctly in two seconds. The 3D version will be admired, then misread.\n"}], "grading": null}, {"id": "eval-3_choropleth-classification-with_skill", "prompt": "I have COVID case rate per 100k people per US county for 2020-2023, and I want to make a choropleth map for an article showing 'America's hardest-hit counties'. Should I use Jenks natural breaks or quantiles for the color scale? My intuition is Jenks but my editor says quantiles look more 'honest'. Which is right?", "eval_id": 3, "outputs": [{"name": "response.md", "type": "text", "content": "# Jenks vs. Quantiles for \"America's Hardest-Hit Counties\"\n\nShort answer: **your editor is right for the wrong reason, and you're wrong for the right reason.** For this specific article, use **neither as your default** \u00e2\u20ac\u201d use a **perceptually-uniform sequential scale with a small number of fixed, meaningful breakpoints** (e.g., 0, 5k, 10k, 20k, 30k, 40k+ per 100k). If you must pick one of the two, **quantiles** \u00e2\u20ac\u201d but understand what you're giving up.\n\nHere's the reasoning, in the order it should actually drive your decision.\n\n## 1. The framing problem comes first, before classification\n\nYour headline is \"America's hardest-hit counties.\" That is a **message graphic** (Bertin's term) \u00e2\u20ac\u201d memorizable, one-glance, communicating a known finding. It is not a discovery/processing graphic. That matters because:\n\n- **Jenks** optimizes within-class homogeneity. It will find the \"natural\" cliffs in *your* dataset. Change the dataset (add 2024, drop a state, switch from cumulative to annual) and the breaks move. Readers comparing your map to anyone else's map of the same phenomenon will see different geographies. That is the opposite of honest for a published article.\n- **Quantiles** guarantee equal-area color usage \u00e2\u20ac\u201d every bin has the same number of counties. The map will *always* look dramatic, even if COVID had been uniformly mild, because the top quintile is, by construction, the top 20%. That's the editor's \"honest\" intuition backwards: equal *visual* weight per bin masks the *actual* magnitude differences between bins.\n\nNeither method ties the color to a real-world threshold. Both are data-dependent.\n\n## 2. Bertin's deeper objection \u00e2\u20ac\u201d and why it matters here\n\nChoropleths take a quantitative variable (cases per 100k) and convert it into an ordered one (5 or 7 bins). Bertin calls this \"transforming Q into O\" and warns it's fine for *communication* of a known message, dishonest for *discovery*. Since you're communicating a known message, you've earned the right to bin \u00e2\u20ac\u201d but you should bin on **meaningful thresholds**, not on the shape of your sample.\n\nConcretely, for COVID cases per 100k 2020-2023, cumulative county rates run roughly 0 to 50,000+. Pick breakpoints a reader can reason about: 0\u00e2\u20ac\u201c5k, 5\u00e2\u20ac\u201c10k, 10\u00e2\u20ac\u201c20k, 20\u00e2\u20ac\u201c30k, 30k+. These are round, memorable, and a reader looking at any other COVID map can compare. Jenks breaks of \"0\u00e2\u20ac\u201c4,237 / 4,238\u00e2\u20ac\u201c8,914 / ...\" cannot be compared to anything.\n\n## 3. If you're forced to choose Jenks vs. quantiles\n\n| | Jenks | Quantiles |\n|---|---|---|\n| Reveals real clusters in *this* dataset | Yes | No |\n| Comparable across datasets/time | No | No |\n| Equal visual weight per bin | No | Yes |\n| Tends to flatter the \"shocking\" headline | Yes (cliffs at outliers) | Variable |\n| Defensible as \"honest\" to a skeptical editor | Harder | Easier |\n\nJenks will produce a more visually striking map because COVID rates have a long right tail \u00e2\u20ac\u201d Jenks will pull the top class to capture the outlier counties, and they'll glow. That's what your intuition is picking up: it *looks* like the story. But it's the data-driven equivalent of choosing the aspect ratio that makes the line steepest. Tufte's Lie Factor isn't formally violated, but the spirit is: design variation (the algorithm chose the breaks) is doing work the data should do.\n\nQuantiles avoid that specific manipulation, which is what your editor means by \"honest.\" But quantile maps universally over-emphasize differences between near-identical counties at percentile boundaries, and under-emphasize real gaps inside a bin.\n\n## 4. What to actually ship\n\n1. **Sequential gray or single-hue scale** (viridis, or a single-hue blue/orange ramp). Never a diverging scale unless you have a meaningful midpoint, which you don't.\n2. **5 bins on round, externally-defensible thresholds.** Document the choice in the caption: \"Bins: 0, 5k, 10k, 20k, 30k cases per 100k. Source: ___.\"\n3. **Show the distribution next to the map.** A thin histogram strip under the legend, with the breakpoints marked, lets a reader see what each color actually contains. This is the single most honest thing you can do, and it neutralizes the entire Jenks-vs-quantiles argument \u00e2\u20ac\u201d the reader sees the raw shape.\n4. **Population-normalize** (you already did \u00e2\u20ac\u201d per 100k) and **state the time window in the title**, not the caption. \"Cumulative COVID-19 cases per 100,000 residents, U.S. counties, 2020\u00e2\u20ac\u201c2023.\"\n5. **Counties with < ~1,000 residents:** consider suppressing or visually muting. Rate denominators that small produce noise that dominates color, and the noise lives in places like rural Nebraska that will hijack \"hardest-hit\" framing.\n6. **Inset or table for the top 10 named counties.** A map shows the geography; a small table next to it shows the actual numbers \u00e2\u20ac\u201d the table does the work the choropleth can't (exact ratios). Tufte: \u00e2\u2030\u00a420 numbers, prefer a table.\n\n## 5. Tell your editor\n\n\"You're right that quantiles are more defensible against the charge of picking flattering breaks. But both methods hide the real magnitudes behind algorithm-chosen bins. I'm using fixed round-number thresholds so the reader can compare our map to any other COVID map, plus a small histogram under the legend so they can see the underlying distribution. That's more honest than either of us was proposing.\"\n\nThat's the actionable answer. Bertin gets you to the framing (Q\u00e2\u2020\u2019O is a communication choice, not a discovery tool); Tufte gets you to \"show the data\" (the histogram strip) and \"compared to what?\" (round, externally meaningful thresholds).\n"}], "grading": null}, {"id": "eval-3_choropleth-classification-without_skill", "prompt": "I have COVID case rate per 100k people per US county for 2020-2023, and I want to make a choropleth map for an article showing 'America's hardest-hit counties'. Should I use Jenks natural breaks or quantiles for the color scale? My intuition is Jenks but my editor says quantiles look more 'honest'. Which is right?", "eval_id": 3, "outputs": [{"name": "response.md", "type": "text", "content": "# Use quantiles. Your editor is right.\n\nFor a journalism piece titled \"America's hardest-hit counties,\" **quantiles** are the better choice. Here's why, and what to do about the tradeoffs.\n\n## The short answer\n\n- **Jenks** optimizes for *within-class similarity* in your data. It's a clustering algorithm. Great for analytical/exploratory work where you want to reveal the natural structure of the distribution.\n- **Quantiles** guarantee an equal number of counties in each color bin. That's what makes them feel \"honest\" \u00e2\u20ac\u201d every shade on the legend represents the same number of places, so the reader can directly compare \"top 20% vs bottom 20%.\"\n\nFor a national choropleth aimed at a general audience, quantiles win on three grounds that matter for your story:\n\n1. **Map readability.** US county COVID rates are heavily right-skewed (a few rural counties had catastrophic per-capita rates because of small denominators and outbreaks in prisons/meatpacking plants/nursing homes). Jenks will spend most of its breakpoints isolating those outliers, leaving 90%+ of the country in one or two indistinguishable colors. Your map will look mostly blank. Quantiles force visual contrast across the whole country, which is what a \"hardest-hit counties\" map needs.\n\n2. **Comparability and legend clarity.** A quintile legend (\"worst 20%, next 20%, ...\") is something a reader understands in one second without studying the legend. Jenks breaks land on arbitrary numbers like 4,712 / 8,931 / 17,204 that mean nothing to a reader and can't be compared across maps (e.g., if you do a follow-up map for 2024, Jenks breaks will shift and the maps won't be visually comparable).\n\n3. **Resistance to gaming accusations.** Jenks is a *data-driven* algorithm, which sounds neutral but actually means the breakpoints move based on what makes the map look most differentiated. A skeptical reader (or a county official who's mad about their shading) can't easily audit it. Quantiles are transparent: \"this county is in the worst quintile, period.\"\n\n## Your intuition isn't wrong \u00e2\u20ac\u201d it's just for a different job\n\nJenks is the right call when:\n- You're doing analysis, not communication.\n- The distribution is roughly unimodal/bell-shaped (COVID rates aren't).\n- You're highlighting *clusters* in the data itself (\"there are three natural tiers of impact\"), not ranking places.\n- You're making one definitive map, not a series.\n\nNone of those apply here.\n\n## What I'd actually ship\n\n1. **Use quintiles (5 classes).** Quartiles are too coarse for a county map (3,143 counties); deciles are too noisy. Five is the sweet spot and matches what NYT, WaPo, and CDC have used for COVID maps.\n\n2. **Use a sequential colormap**, not diverging. Something like `YlOrRd` or viridis-reversed. Diverging palettes imply a meaningful midpoint, and \"median COVID rate\" isn't a meaningful midpoint here.\n\n3. **Handle the outliers explicitly.** Because quantiles can hide a county that's 5x worse than the next, add an *annotation layer* on top: label the 10\u00e2\u20ac\u201c15 worst counties by name with their actual rate. This gets you the best of both worlds \u00e2\u20ac\u201d honest distributional shading + the dramatic specifics that make the story.\n\n4. **Show the actual numbers somewhere.** Either in the legend (write the rate range for each quintile in small type \u00e2\u20ac\u201d e.g., \"Worst 20%: 14,200\u00e2\u20ac\u201c32,400 per 100k\") or in a small companion histogram. This neutralizes the main critique of quantiles (that they hide the magnitude of differences between bins).\n\n5. **Consider population-weighted quantiles.** Standard quantiles treat Loving County, TX (population ~60) the same as LA County (population ~10M). For a \"hardest-hit\" story about *people*, weighting the quantile breaks by population so that each bin contains 20% of Americans (not 20% of counties) is more defensible and avoids the rural-skew problem. This is the move I'd push for if you have time for one refinement.\n\n6. **One more thing \u00e2\u20ac\u201d think about denominators.** Cumulative case rate per 100k over a 4-year window mixes very different epidemic phases (pre-vaccine Alpha, Delta, Omicron, post-Omicron). Reported cases also got much less reliable after home testing took over in 2022. If you can, either show the four years as small multiples, or restrict to 2020\u00e2\u20ac\u201c2021 when reporting was most consistent. This will affect the story more than the classification choice will.\n\n## Bottom line\n\nShip quantiles (ideally population-weighted), with a sequential palette, and annotate the true outliers by name. Tell your editor you agree, and that you're going one step further by population-weighting the breaks so the map represents Americans, not acreage.\n"}], "grading": null}, {"id": "eval-4_cs-dashboard-with_skill", "prompt": "I'm building a new Looker dashboard for our customer success team. They need to spot at-risk accounts quickly. We have ~500 active accounts, and for each I have: MRR per account, last login date, NPS score (last 90 days), open support tickets count, contract renewal date. How should I lay this out?", "eval_id": 4, "outputs": [{"name": "response.md", "type": "text", "content": "# At-Risk Accounts Dashboard \u00e2\u20ac\u201d Layout\n\n## The core insight\n\nCS isn't asking \"what's our average NPS?\" \u00e2\u20ac\u201d they're asking \"**which 15 of these 500 accounts should I call this week?**\" That's a Bertin **processing** task (find anomalies in a population), not a **message** task (communicate a known KPI). Almost every Looker dashboard built for this gets it wrong by leading with tiles (\"Avg NPS: 42\", \"Total MRR: $2.4M\") that tell you nothing about which account to open.\n\nSo the dashboard is **one big sorted table with sparklines**, supported by two diagnostic charts. Not six KPI tiles across the top.\n\n---\n\n## Layout (top to bottom)\n\n### Row 1 \u00e2\u20ac\u201d Risk-ranked account table (the whole point of the dashboard)\n\nThis is ~80% of the screen. One row per account, sortable, but **defaulted to descending by a composite Risk Score**. ~25\u00e2\u20ac\u201c30 rows visible without scrolling; the remaining 470 are one scroll away.\n\nColumns, left to right, in the order a CSM's eye would walk them:\n\n| Column | Encoding | Why |\n|---|---|---|\n| Account name | text, left-aligned | the identifier |\n| **Risk score** | number + a 6-cell heat strip (light gray \u00e2\u2020\u2019 dark gray, never red/green as the *only* channel) | the sort key; value (light-to-dark) is Bertin's ordered variable |\n| MRR | right-aligned number, $ formatted | quantity \u00e2\u2020\u2019 position on a number line (the column itself) |\n| MRR rank percentile | tiny inline bar, 0\u00e2\u20ac\u201c100% | gives the MRR number context \u00e2\u20ac\u201d \"compared to what?\" (Tufte) |\n| Days since last login | right-aligned number, colored only if > 30 | the eye should jump to the outliers, not scan every cell |\n| NPS (90d) | number + a 1-row sparkline of the last ~6 surveys | the sparkline shows whether a 40 is rising from 20 or falling from 70 \u00e2\u20ac\u201d totally different stories |\n| Open tickets | number; small dot-plot beside it of last 8 weeks | trend matters more than the snapshot |\n| Days to renewal | number, with a thin horizontal bar showing position in the year | \"90 days out + score of 78\" is the panic cell |\n\nA few craft notes:\n\n- **No vertical gridlines.** Use whitespace + a hairline rule every 5 rows (Tufte: \"cut thin white gridlines through the bars\").\n- **Right-align all numerics** so decimal points stack and the eye can compare down a column.\n- **Use actual data values for the tick endpoints** on sparklines (min / max / current), not round numbers.\n- **One neutral color** (dark gray) for all data. Reserve a single accent (a warm tone, *not* red \u00e2\u20ac\u201d accessibility) for the Risk-score heat strip and for the \"stale login\" highlight.\n- **Direct labels on sparklines** \u00e2\u20ac\u201d no legend.\n\nThis single table is what Tufte calls a **semi-graphic**: text-tables enriched with word-sized graphics. For 500 rows \u00c3\u2014 8 columns, nothing else comes close on data density.\n\n### Row 2 \u00e2\u20ac\u201d Two diagnostic panels (side by side, equal width)\n\nNow that the user has a ranked list, two charts help them *understand the population* and spot patterns the sort might hide.\n\n**Panel A \u00e2\u20ac\u201d Renewal-risk scatter** (the most important chart on the dashboard)\n\n- X: days to renewal (0 \u00e2\u2020\u2019 365)\n- Y: risk score\n- Mark size: MRR (so the eye is drawn to large at-risk accounts near renewal)\n- Range-framed, no grid, no chart border.\n- Annotate the **upper-left quadrant** (\"renewing soon AND high risk\") with a label \u00e2\u20ac\u201d that's the panic zone.\n- Each dot is clickable to filter the table above.\n\nTufte: \"the scatterplot is the greatest of all graphical designs.\" Three components in one image (Bertin's max for a single-glance read): two planar dimensions + one ordered retinal variable (size). This is the sweet spot.\n\n**Panel B \u00e2\u20ac\u201d Small multiples of NPS trend, faceted by MRR tier**\n\n- 4 small panels: Enterprise / Mid-market / SMB / Self-serve\n- Each shows the *median* NPS line + a thin band for 25\u00e2\u20ac\u201c75th percentile, last 12 months\n- Constant Y axis across all four (-100 to +100), constant X axis (12 months)\n- Range frame, no grid.\n\nDesign constancy across the four panels is the entire point \u00e2\u20ac\u201d the eye reads \"Mid-market is collapsing while Enterprise is stable\" in one second. Stacking these into a single multi-color line chart would destroy that.\n\n---\n\n## What I'm explicitly *not* recommending\n\n- **No KPI tiles at the top.** \"Avg MRR: $4,800\" answers nothing CS can act on. A KPI tile is a *message* construction misused for a *processing* task.\n- **No gauges, donuts, or pie charts** for NPS distribution. A sorted bar or a histogram would be better, but neither earns its space here \u00e2\u20ac\u201d the table already shows every NPS score in context.\n- **No heatmap of accounts \u00c3\u2014 metrics.** Tempting, but you have one quantitative metric per cell and 500 rows; the table-with-sparklines is denser and more honest.\n- **No color-coded \"health = red/yellow/green\" pill.** Color hue has no innate order (Bertin) and ~8% of your users can't reliably distinguish red from green. Use a single light-to-dark gray ramp for the risk score and let position in the sorted table do the heavy lifting.\n- **No \"MRR over time\" line chart at the top.** It's a vanity metric for CS \u00e2\u20ac\u201d they cannot act on aggregate MRR; they act on individual accounts.\n\n---\n\n## The Risk Score itself\n\nSince you didn't define one, here's a defensible starting formula (z-score each component, then weight). You'll iterate, but expose it transparently in a tooltip:\n\n```\nrisk = 0.30 * z(days_since_last_login)\n     + 0.25 * z(-nps_90d)\n     + 0.20 * z(open_tickets)\n     + 0.15 * z(-days_to_renewal)     // closer renewal = higher risk\n     + 0.10 * z(mrr)                  // bigger accounts get a small boost\n                                       // because they're more painful to lose\n```\n\nShow the score *and* let CSMs sort by any individual column. The score is a starting filter, not a verdict.\n\n---\n\n## The closing test\n\nBertin: in one glance, can a CSM answer \"which accounts are at risk, and what kind of risk?\" \u00e2\u20ac\u201d yes, the sort + the sparklines reveal both magnitude and trajectory.\n\nTufte: if I removed everything that isn't data, what would I lose? The hairline row dividers, the renewal-bar background, the heat strip \u00e2\u20ac\u201d all earn their ink because they encode something. Strip the rest.\n"}], "grading": null}, {"id": "eval-4_cs-dashboard-without_skill", "prompt": "I'm building a new Looker dashboard for our customer success team. They need to spot at-risk accounts quickly. We have ~500 active accounts, and for each I have: MRR per account, last login date, NPS score (last 90 days), open support tickets count, contract renewal date. How should I lay this out?", "eval_id": 4, "outputs": [{"name": "response.md", "type": "text", "content": "# CS At-Risk Accounts Dashboard \u00e2\u20ac\u201d Layout Recommendation\n\nWith 500 accounts and 5 signals per account, the dashboard's job is **funneling CSMs from \"who do I look at first?\" down to \"what do I do about this one?\"** in under 30 seconds. Build it as a single page with three vertical zones.\n\n---\n\n## Zone 1 (top strip) \u00e2\u20ac\u201d Health Triage Scorecards\n\nA row of 4 single-value tiles. These exist so a CSM opening the dashboard at 9am knows immediately if today is a normal day or a fire drill.\n\n| Tile | Metric | Conditional formatting |\n|---|---|---|\n| 1 | **# Accounts at Risk** (composite: see scoring below) | Red if > 10% of book |\n| 2 | **MRR at Risk** ($ sum of at-risk accounts) | Red if > 15% of total MRR |\n| 3 | **Renewals in next 60 days** (count + $ MRR) | Amber always \u00e2\u20ac\u201d it's a watch metric |\n| 4 | **Avg NPS (last 90d)** with sparkline of weekly trend | Red if < 30, amber 30-50 |\n\nKeep these tiles 1 row tall. Don't add a 5th \u00e2\u20ac\u201d five tiles in a row stops being scannable.\n\n---\n\n## Zone 2 (middle) \u00e2\u20ac\u201d The Risk Matrix (the centerpiece)\n\nThis is what the team will actually use. **Scatter plot, full width**, takes ~40% of the page:\n\n- **X-axis:** Days since last login (0 on the left, 90+ on the right)\n- **Y-axis:** MRR per account (log scale \u00e2\u20ac\u201d your top accounts will dominate otherwise)\n- **Dot color:** NPS bucket (green \u00e2\u2030\u00a5 50, grey 30-49, red < 30, light grey = no NPS)\n- **Dot size:** Open support tickets (capped at ~6 tiers so a 40-ticket account doesn't eat the chart)\n- **Dot border:** Bold red ring if contract renews in < 90 days\n\nThe top-right quadrant \u00e2\u20ac\u201d high MRR, hasn't logged in recently \u00e2\u20ac\u201d is your \"drop everything\" zone. Add a faint quadrant shading or a dashed reference line at \"30 days since login\" and at the median MRR so the quadrant reads instantly.\n\nMake every dot click-through to that account's record in your CRM (Looker's URL drill works fine for this).\n\n---\n\n## Zone 3 (bottom) \u00e2\u20ac\u201d The Action Queue Table\n\nA sorted, filterable table \u00e2\u20ac\u201d this is what CSMs work *from* during the day. One row per account, sorted by a **composite risk score** (descending). Compute the score in LookML so it's reusable:\n\n```\nrisk_score =\n  (days_since_login / 7)              -- 1 pt per week dark\n  + (90 - nps_score) / 10              -- detractors hurt more\n  + (open_tickets * 2)                 -- tickets weighted heavily\n  + (case when days_to_renewal < 90 then 20 else 0 end)\n  + log(mrr)                           -- bigger accounts float up\n```\n\nColumns, left to right (this order matters \u00e2\u20ac\u201d it mirrors how a CSM reads the row):\n\n1. **Account name** (link to CRM)\n2. **Owner / CSM** (so people can filter to themselves)\n3. **MRR** \u00e2\u20ac\u201d right-aligned, with a tiny inline bar (Looker's `html:` formatter) for at-a-glance scale\n4. **Days since login** \u00e2\u20ac\u201d heatmap cell: green 0-7, yellow 8-30, red 31+\n5. **NPS** \u00e2\u20ac\u201d colored pill (the actual number, not just a color)\n6. **Open tickets** \u00e2\u20ac\u201d number, red bg if \u00e2\u2030\u00a5 3\n7. **Days to renewal** \u00e2\u20ac\u201d red bg if < 60, amber if < 120\n8. **Risk score** \u00e2\u20ac\u201d the sort key, shown so people trust the order\n\nDefault filter: `risk_score > X` so the table opens showing only the ~30-50 accounts worth attention, not all 500. Add filters at the top for CSM owner, segment, and renewal window.\n\n---\n\n## What I'd deliberately NOT do\n\n- **No pie charts** anywhere. NPS distribution as a pie is the classic mistake here \u00e2\u20ac\u201d use a stacked bar or just the avg-NPS tile.\n- **No gauges** for the headline metrics. They eat space and only show one number.\n- **Don't show all 500 accounts in the table by default.** Filter to risk_score > threshold; let CSMs lift the filter if they want the full book.\n- **Don't put the scatter and the table side-by-side.** Full-width each \u00e2\u20ac\u201d the scatter needs horizontal room for the login axis to be readable, and the table needs room for 8 columns without truncation.\n\n---\n\n## Two small things that punch above their weight\n\n1. **Sparkline column** in the table for \"NPS trend last 4 quarters\" \u00e2\u20ac\u201d Looker supports this via a measure with `html:` rendering. A flat-then-dropping line tells a story a single NPS number can't.\n2. **A \"Newly at risk this week\" callout** above the table \u00e2\u20ac\u201d accounts whose risk_score crossed the threshold in the last 7 days. These are the highest-leverage interventions because the relationship hasn't fully decayed yet.\n\nBuild Zone 1 + Zone 2 first, ship it to two CSMs, watch them use it for a week, then build Zone 3 based on which columns they actually asked you to add. The scoring formula will need tuning against your real data \u00e2\u20ac\u201d start with the weights above and adjust after you see which accounts it flags vs. which ones actually churned last quarter.\n"}], "grading": null}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "data-visualization", "skill_path": "C:\\Users\\vikas\\.claude\\skills\\data-visualization", "executor_model": "<model-name>", "analyzer_model": "<model-name>", "timestamp": "2026-05-24T10:03:44Z", "evals_run": [1, 2, 3, 4], "runs_per_configuration": 3}, "runs": [{"eval_id": 1, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 55.8, "tokens": 29066, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)", "passed": true, "evidence": "'Ship this instead: small-multiple retention curves, grouped by quarter. 8 panels (one per signup quarter, 2024 Q1 \u00e2\u2020\u2019 2025 Q4), arranged 2\u00c3\u20144 or 4\u00c3\u20142.'"}, {"text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)", "passed": true, "evidence": "'The triangular-data problem vanishes: recent cohorts just have shorter curves. No empty cells, no awkward void.'"}, {"text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration", "passed": true, "evidence": "'Your designer gets something that looks composed rather than computed.' Plus advice on identical axes, direct labels, no rainbow, no 3-D, no gradient fills, and explicit Y-axis scaling to avoid Lie-Factor."}, {"text": "Specifies a sensible color scale for retention \u00e2\u20ac\u201d sequential or diverging anchored on a target, NOT rainbow", "passed": true, "evidence": "'No rainbow colormap on the heatmap if your designer insists on keeping it \u00e2\u20ac\u201d viridis or a single-hue sequential at minimum'"}, {"text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)", "passed": true, "evidence": "Detailed design spec: '8 panels... X = months since signup (0\u00e2\u20ac\u201c12), Y = % retained. Each panel shows the 3 monthly cohorts in that quarter as thin gray lines, with the quarter's average overlaid darker.' Plus a table spec with column headers."}], "notes": []}, {"eval_id": 2, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 90.0, "tokens": 30609, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)", "passed": true, "evidence": "'3D bars on a 2D screen lie about the numbers. ... Bars in the back row are foreshortened, bars in the front row are not, and bars in the middle row are partially occluded by the front row.'"}, {"text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)", "passed": true, "evidence": "'rainbow is the worst choice for a quantity: hue has no perceptual order (Bertin: color is selective but not ordered, and not quantitative at all). Viewers cannot rank rainbow colors by value without consulting the legend.'"}, {"text": "Identifies the all-caps labels as a stylistic issue", "passed": true, "evidence": "'ALL CAPS labels. Tufte calls these the \"computer duck\" \u00e2\u20ac\u201d they read slower and add nothing. Use mixed case.'"}, {"text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars", "passed": true, "evidence": "'a small multiple of range-framed line charts (one panel per product, shared Y scale so they're comparable), or a single line chart with three directly-labeled lines'"}, {"text": "Provides revised code OR a concrete, code-equivalent redesign description", "passed": true, "evidence": "Provides two complete matplotlib code blocks: one for direct-labeled line chart and one for small-multiples panels."}], "notes": []}, {"eval_id": 3, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 76.5, "tokens": 29299, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')", "passed": true, "evidence": "'use neither as your default \u00e2\u20ac\u201d use a perceptually-uniform sequential scale with a small number of fixed, meaningful breakpoints... If you must pick one of the two, quantiles \u00e2\u20ac\u201d but understand what you're giving up.' A clear recommendation."}, {"text": "Explains what each scheme does perceptually and how it shapes the story the map tells", "passed": true, "evidence": "'Jenks optimizes within-class homogeneity. It will find the \"natural\" cliffs in your dataset...' vs 'Quantiles guarantee equal-area color usage \u00e2\u20ac\u201d every bin has the same number of counties. The map will always look dramatic.' Plus a comparison table."}, {"text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing", "passed": true, "evidence": "'Choropleths take a quantitative variable (cases per 100k) and convert it into an ordered one (5 or 7 bins). Bertin calls this \"transforming Q into O\" and warns it's fine for communication of a known message, dishonest for discovery.' Explicitly notes loss of quantitative resolution."}, {"text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)", "passed": true, "evidence": "'Counties with < ~1,000 residents: consider suppressing or visually muting. Rate denominators that small produce noise that dominates color, and the noise lives in places like rural Nebraska that will hijack \"hardest-hit\" framing.' Plus 'COVID rates have a long right tail.'"}, {"text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)", "passed": true, "evidence": "'Your headline is \"America's hardest-hit counties.\" That is a message graphic (Bertin's term) \u00e2\u20ac\u201d memorizable, one-glance, communicating a known finding. It is not a discovery/processing graphic.'"}], "notes": []}, {"eval_id": 4, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 91.9, "tokens": 29725, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges", "passed": true, "evidence": "'So the dashboard is one big sorted table with sparklines, supported by two diagnostic charts. Not six KPI tiles across the top.' The table is ~80% of the screen, sortable, defaulted to risk-score descending."}, {"text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts", "passed": true, "evidence": "'NPS (90d) | number + a 1-row sparkline of the last ~6 surveys', 'Open tickets | number; small dot-plot beside it of last 8 weeks', 'MRR rank percentile | tiny inline bar', plus '6-cell heat strip' on Risk score."}, {"text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) \u00e2\u20ac\u201d not just 'show the data'", "passed": true, "evidence": "Provides a defined Risk Score formula: 'risk = 0.30 * z(days_since_last_login) + 0.25 * z(-nps_90d) + 0.20 * z(open_tickets) + 0.15 * z(-days_to_renewal) + 0.10 * z(mrr)'"}, {"text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR \u00c3\u2014 login recency, ticket spike heatmap)", "passed": true, "evidence": "'Panel A \u00e2\u20ac\u201d Renewal-risk scatter... X: days to renewal, Y: risk score, Mark size: MRR' and 'Panel B \u00e2\u20ac\u201d Small multiples of NPS trend, faceted by MRR tier.'"}, {"text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars", "passed": true, "evidence": "'No KPI tiles at the top. \"Avg MRR: $4,800\" answers nothing CS can act on. A KPI tile is a message construction misused for a processing task. No gauges, donuts, or pie charts...'"}], "notes": []}, {"eval_id": 1, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 75.9, "tokens": 20821, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)", "passed": true, "evidence": "'A retention curves overlay (small set of cohorts as lines, x = months since signup) as the hero chart.' Also mentions 'Small multiples (4 rows x 6 cols of mini line charts, one per cohort)' as a variation."}, {"text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)", "passed": true, "evidence": "'Leave the lower triangle truly empty (no gray fill, no \"N/A\"). The diagonal edge is information.' and 'The triangular structure disappears entirely because every cohort starts at month 0.'"}, {"text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration", "passed": true, "evidence": "'Treat it as a table first, color second \u00e2\u20ac\u201d this is the Tufte-style move and what designers usually mean by \"polished\"' followed by guidance on tabular numerals, right-aligned numbers, narrow color range, no gridlines."}, {"text": "Specifies a sensible color scale for retention \u00e2\u20ac\u201d sequential or diverging anchored on a target, NOT rainbow", "passed": true, "evidence": "'Use a muted, narrow-range color scale (e.g., a single hue from white to a brand color, mapped to the 60\u00e2\u20ac\u201c100% range, not 0\u00e2\u20ac\u201c100%). Don't use red-green diverging' and 'Don't use viridis on a board deck.'"}, {"text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)", "passed": true, "evidence": "Concrete slide structure: 'Hero chart: Option A (retention curves overlay), one sentence headline... Reference table: Option B (triangular table-heatmap)... Footnote: cohort definition...'"}], "notes": []}, {"eval_id": 2, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.8, "passed": 4, "failed": 1, "total": 5, "time_seconds": 54.8, "tokens": 20982, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)", "passed": true, "evidence": "'Occlusion: bars hide other bars... No shared baseline... Perspective distortion: a bar in the back looks shorter than an equal bar in the front.'"}, {"text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)", "passed": true, "evidence": "'Rainbow colormap: not perceptually uniform, not colorblind-safe, and here it would be encoding a value (height) that's already encoded by height - redundant and misleading because rainbow implies ordering that doesn't match the data.'"}, {"text": "Identifies the all-caps labels as a stylistic issue", "passed": false, "evidence": "Not addressed in the response. The all-caps labels (WEEK, PRODUCT, DAILY ACTIVE USERS, WEEKLY ACTIVE USERS) are silently fixed in the rewritten code but never flagged as an issue."}, {"text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars", "passed": true, "evidence": "'I'd scrap the 3D bar approach for an exec dashboard and use small multiples or a slope/line chart.' Provides 2D line chart with three labeled series."}, {"text": "Provides revised code OR a concrete, code-equivalent redesign description", "passed": true, "evidence": "Provides full matplotlib code block for the recommended 2D line chart with direct end-labels, and a second code block for a fixed 3D version with viridis."}], "notes": []}, {"eval_id": 3, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.8, "passed": 4, "failed": 1, "total": 5, "time_seconds": 57.0, "tokens": 20258, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')", "passed": true, "evidence": "'Use quantiles. Your editor is right.' Unambiguous recommendation."}, {"text": "Explains what each scheme does perceptually and how it shapes the story the map tells", "passed": true, "evidence": "'Jenks optimizes for within-class similarity... Quantiles guarantee an equal number of counties in each color bin... Jenks will spend most of its breakpoints isolating those outliers, leaving 90%+ of the country in one or two indistinguishable colors.'"}, {"text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing", "passed": false, "evidence": "Does not mention alternatives like proportional symbols, dot density, or hex bins. The 'annotation layer' for top-10 counties is within-choropleth, not an alternative form. Does not explicitly frame pre-classing as loss of quantitative resolution either."}, {"text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)", "passed": true, "evidence": "'US county COVID rates are heavily right-skewed (a few rural counties had catastrophic per-capita rates because of small denominators)...' Plus 'Handle the outliers explicitly. Because quantiles can hide a county that's 5x worse than the next, add an annotation layer.' Also suggests population-weighted quantiles."}, {"text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)", "passed": true, "evidence": "'Jenks is the right call when: You're doing analysis, not communication... You're highlighting clusters in the data itself.' Distinguishes communication vs analytical/exploratory framing."}], "notes": []}, {"eval_id": 4, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.6, "passed": 3, "failed": 2, "total": 5, "time_seconds": 64.9, "tokens": 20870, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges", "passed": false, "evidence": "The table is Zone 3 (bottom), with KPI tiles as Zone 1 and a scatter as the 'centerpiece' Zone 2. 'Zone 1 (top strip) \u00e2\u20ac\u201d Health Triage Scorecards: A row of 4 single-value tiles.' and 'Zone 2 (middle) \u00e2\u20ac\u201d The Risk Matrix (the centerpiece).' The table is not the primary view, and KPI tiles are explicitly recommended."}, {"text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts", "passed": true, "evidence": "'MRR \u00e2\u20ac\u201d right-aligned, with a tiny inline bar (Looker's html: formatter) for at-a-glance scale', 'Days since login \u00e2\u20ac\u201d heatmap cell: green 0-7, yellow 8-30, red 31+', plus 'Sparkline column in the table for NPS trend last 4 quarters.'"}, {"text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) \u00e2\u20ac\u201d not just 'show the data'", "passed": true, "evidence": "Provides full LookML risk_score formula: '(days_since_login / 7) + (90 - nps_score) / 10 + (open_tickets * 2) + (case when days_to_renewal < 90 then 20 else 0 end) + log(mrr)'"}, {"text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR \u00c3\u2014 login recency, ticket spike heatmap)", "passed": true, "evidence": "'Scatter plot, full width... X-axis: Days since last login... Y-axis: MRR per account (log scale)... Dot color: NPS bucket... Dot size: Open support tickets... Dot border: Bold red ring if contract renews in < 90 days.'"}, {"text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars", "passed": false, "evidence": "Explicitly recommends KPI tiles ('A row of 4 single-value tiles'). Discourages pie charts and gauges ('No pie charts anywhere... No gauges for the headline metrics'), but actively endorses bare KPI tiles, which the assertion calls out."}], "notes": []}], "run_summary": {"with_skill": {"pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0}, "time_seconds": {"mean": 78.55, "stddev": 16.6442, "min": 55.8, "max": 91.9}, "tokens": {"mean": 29674.75, "stddev": 679.9786, "min": 29066, "max": 30609}}, "without_skill": {"pass_rate": {"mean": 0.8, "stddev": 0.1633, "min": 0.6, "max": 1.0}, "time_seconds": {"mean": 63.15, "stddev": 9.5424, "min": 54.8, "max": 75.9}, "tokens": {"mean": 20732.75, "stddev": 323.5938, "min": 20258, "max": 20982}}, "delta": {"pass_rate": "+0.20", "time_seconds": "+15.4", "tokens": "+8942"}}, "notes": ["With-skill: 100% pass rate (20/20). Without-skill: 80% (16/20). Delta +20%.", "The skill was most discriminating on eval-4 (CS dashboard, 5/5 vs 3/5): the baseline organized the dashboard around KPI tiles + scatter + table, missing the table-as-primary-view and KPI-tiles-discouraged assertions. With-skill correctly led with sorted-table-with-sparklines and explicitly rejected KPI tiles as a message construction misused for a processing task.", "Eval-2 (3D bar) and eval-3 (choropleth) each showed a +1 delta. Both involved second-order critiques: the all-caps labels callout (eval-2) and the loss-of-quantitative-resolution Bertin Q->O critique (eval-3). The baseline reaches the correct topline answer but skips the systematic critique.", "Eval-1 (cohort retention) was 5/5 for both. The baseline is unusually strong here \u2014 it independently mentioned semi-graphic tables, retention-curve overlays, and tool-specific advice (great_tables, Altair). The skill did not lose this eval but did not measurably gain either.", "Token cost: with-skill averaged 29.7K tokens, without-skill 20.7K \u2014 a ~43% token premium for the skill. Time was roughly comparable (78s vs 63s avg).", "Implication: the skill's value is largely in pushing the model toward second-order rigor (typography, function-fit, systematic anti-patterns) rather than first-order chart-type selection, which the baseline already handles well.", "No assertion was satisfied by neither condition \u2014 the test set may be too easy. Future iterations could add harder edge cases (e.g., adversarial requests like \"make my pie chart look better\" where the right answer is to refuse the form)."]}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges",
+      "passed": false,
+      "evidence": "The table is Zone 3 (bottom), with KPI tiles as Zone 1 and a scatter as the 'centerpiece' Zone 2. 'Zone 1 (top strip) \u00e2\u20ac\u201d Health Triage Scorecards: A row of 4 single-value tiles.' and 'Zone 2 (middle) \u00e2\u20ac\u201d The Risk Matrix (the centerpiece).' The table is not the primary view, and KPI tiles are explicitly recommended."
+    },
+    {
+      "text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts",
+      "passed": true,
+      "evidence": "'MRR \u00e2\u20ac\u201d right-aligned, with a tiny inline bar (Looker's html: formatter) for at-a-glance scale', 'Days since login \u00e2\u20ac\u201d heatmap cell: green 0-7, yellow 8-30, red 31+', plus 'Sparkline column in the table for NPS trend last 4 quarters.'"
+    },
+    {
+      "text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) \u00e2\u20ac\u201d not just 'show the data'",
+      "passed": true,
+      "evidence": "Provides full LookML risk_score formula: '(days_since_login / 7) + (90 - nps_score) / 10 + (open_tickets * 2) + (case when days_to_renewal < 90 then 20 else 0 end) + log(mrr)'"
+    },
+    {
+      "text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR \u00c3\u2014 login recency, ticket spike heatmap)",
+      "passed": true,
+      "evidence": "'Scatter plot, full width... X-axis: Days since last login... Y-axis: MRR per account (log scale)... Dot color: NPS bucket... Dot size: Open support tickets... Dot border: Bold red ring if contract renews in < 90 days.'"
+    },
+    {
+      "text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars",
+      "passed": false,
+      "evidence": "Explicitly recommends KPI tiles ('A row of 4 single-value tiles'). Discourages pie charts and gauges ('No pie charts anywhere... No gauges for the headline metrics'), but actively endorses bare KPI tiles, which the assertion calls out."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 2,
+    "total": 5,
+    "pass_rate": 0.6
+  }
+}

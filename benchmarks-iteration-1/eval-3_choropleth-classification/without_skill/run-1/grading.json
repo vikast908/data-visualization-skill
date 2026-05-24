@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')",
+      "passed": true,
+      "evidence": "'Use quantiles. Your editor is right.' Unambiguous recommendation."
+    },
+    {
+      "text": "Explains what each scheme does perceptually and how it shapes the story the map tells",
+      "passed": true,
+      "evidence": "'Jenks optimizes for within-class similarity... Quantiles guarantee an equal number of counties in each color bin... Jenks will spend most of its breakpoints isolating those outliers, leaving 90%+ of the country in one or two indistinguishable colors.'"
+    },
+    {
+      "text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing",
+      "passed": false,
+      "evidence": "Does not mention alternatives like proportional symbols, dot density, or hex bins. The 'annotation layer' for top-10 counties is within-choropleth, not an alternative form. Does not explicitly frame pre-classing as loss of quantitative resolution either."
+    },
+    {
+      "text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)",
+      "passed": true,
+      "evidence": "'US county COVID rates are heavily right-skewed (a few rural counties had catastrophic per-capita rates because of small denominators)...' Plus 'Handle the outliers explicitly. Because quantiles can hide a county that's 5x worse than the next, add an annotation layer.' Also suggests population-weighted quantiles."
+    },
+    {
+      "text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)",
+      "passed": true,
+      "evidence": "'Jenks is the right call when: You're doing analysis, not communication... You're highlighting clusters in the data itself.' Distinguishes communication vs analytical/exploratory framing."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

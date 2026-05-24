@@ -1,0 +1,57 @@
+{
+  "skill_name": "data-visualization",
+  "evals": [
+    {
+      "id": 1,
+      "name": "cohort-retention-chart-choice",
+      "prompt": "I'm a data engineer at a SaaS company visualizing churn for our finance team's monthly board deck. I have 24 monthly signup cohorts × 12 observation months — it's triangular because cohort N can only be observed for 12-N months. I was going to do a heatmap but our designer wants 'something more polished'. What chart should I use?",
+      "expected_output": "Defends the heatmap (or a small-multiples retention curve) on perceptual grounds; explains why polish ≠ decoration; cites Bertin (matrix/value encoding) or Tufte (small multiples) reasoning; concrete recommendation.",
+      "assertions": [
+        {"text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)"},
+        {"text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)"},
+        {"text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration"},
+        {"text": "Specifies a sensible color scale for retention — sequential or diverging anchored on a target, NOT rainbow"},
+        {"text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "3d-bar-rainbow-critique",
+      "prompt": "Review this matplotlib code for our weekly active users chart on the exec dashboard. It's a 3D bar chart with weeks on X, product (Web/iOS/Android) on Y, and DAU on Z, with a rainbow colormap. Any problems?\n\n```python\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nfig = plt.figure(figsize=(8, 6))\nax = fig.add_subplot(111, projection='3d')\n\nweeks = np.arange(13)\nproducts = ['Web', 'iOS', 'Android']\nxs, ys = np.meshgrid(weeks, range(3))\nax.bar3d(xs.flatten(), ys.flatten(), 0,\n         0.8, 0.8, dau.flatten(), cmap='rainbow')\nax.set_xlabel('WEEK')\nax.set_ylabel('PRODUCT')\nax.set_zlabel('DAILY ACTIVE USERS')\nax.set_title('WEEKLY ACTIVE USERS')\nplt.show()\n```",
+      "expected_output": "Identifies multiple Tufte violations: 3-D occlusion / Lie Factor, rainbow colormap not perceptually uniform and not ordered, all-caps labels, vertical Z-axis label. Recommends flattening to small-multiple line/bar chart by product or a single line chart with 3 series labeled at line ends. Provides revised code or a clear redesign sketch.",
+      "assertions": [
+        {"text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)"},
+        {"text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)"},
+        {"text": "Identifies the all-caps labels as a stylistic issue"},
+        {"text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars"},
+        {"text": "Provides revised code OR a concrete, code-equivalent redesign description"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "choropleth-jenks-vs-quantiles",
+      "prompt": "I have COVID case rate per 100k people per US county for 2020-2023, and I want to make a choropleth map for an article showing 'America's hardest-hit counties'. Should I use Jenks natural breaks or quantiles for the color scale? My intuition is Jenks but my editor says quantiles look more 'honest'. Which is right?",
+      "expected_output": "Addresses the Jenks-vs-quantiles tradeoff substantively, but also raises the Bertin critique that choropleths with pre-classed intervals convert Q into O — recommending proportional symbols / dot density as an alternative for discovery, while accepting choropleth for *communication*. Honest about which class scheme suits the communication goal (probably Jenks for natural clusters when communicating a known story; quantiles when discovering or comparing across maps). Mentions log scale if the case-rate distribution is highly skewed.",
+      "assertions": [
+        {"text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')"},
+        {"text": "Explains what each scheme does perceptually and how it shapes the story the map tells"},
+        {"text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing"},
+        {"text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)"},
+        {"text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "cs-dashboard-at-risk-accounts",
+      "prompt": "I'm building a new Looker dashboard for our customer success team. They need to spot at-risk accounts quickly. We have ~500 active accounts, and for each I have: MRR per account, last login date, NPS score (last 90 days), open support tickets count, contract renewal date. How should I lay this out?",
+      "expected_output": "Treats this as a Bertin 'processing' problem (the user is hunting anomalies, not communicating a known result). Recommends a sortable/filterable table-as-primary-view with sparklines or in-line bars per account, NOT a wall of separate charts (gauges, donuts, etc.). Identifies the right at-risk signals (recent low NPS + ticket spike + low usage + near renewal). Considers a small-multiple scatter (e.g., MRR × login recency colored by NPS) as a secondary discovery view. Specifically discourages KPI tiles with bare numbers.",
+      "assertions": [
+        {"text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges"},
+        {"text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts"},
+        {"text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) — not just 'show the data'"},
+        {"text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR × login recency, ticket spike heatmap)"},
+        {"text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "ok our PM wants me to add a 'health score' visualization to the customer detail page in our React admin. each customer has 7 metrics \u2014 logins last 30d, MRR, days since onboarding, NPS, feature adoption %, support tickets, contract renewal date. she keeps saying 'like a radar chart but better'. what would you actually do?",
+    "should_trigger": true
+  },
+  {
+    "query": "im on the analytics team at zendesk and i need to show monthly support ticket trends broken down by category (we have 14 categories) for the ops review tomorrow. tried a stacked area chart but it's a mess. any ideas?",
+    "should_trigger": true
+  },
+  {
+    "query": "review this seaborn code for me \u2014 its for a presentation tomorrow morning:\n```python\nsns.heatmap(corr_matrix, annot=True, cmap='RdYlGn_r', vmin=-1, vmax=1)\nplt.title('FEATURE CORRELATIONS')\n```\nrunning it on 47 features. is this good?",
+    "should_trigger": true
+  },
+  {
+    "query": "trying to decide between mapbox and leaflet for a real estate site that shows median home price by zip code across california. need to visualize ~1700 zips with quantitative data. which is better and what type of map should i draw?",
+    "should_trigger": true
+  },
+  {
+    "query": "my boss sent me this report draft with a 3d pie chart of 'revenue by region' and asked for my thoughts. i think it's bad but i need to articulate why convincingly. help me make the case?",
+    "should_trigger": true
+  },
+  {
+    "query": "we're building a metabase dashboard for product analytics. have weekly active users, feature engagement (top 12 features), funnel conversion rates at 5 stages, retention by signup cohort. ~10 tiles fit on one screen. how should i arrange them?",
+    "should_trigger": true
+  },
+  {
+    "query": "is there a 'correct' way to show a histogram of response times when they're heavily right-skewed? log scale feels wrong but linear scale just shows one giant bar",
+    "should_trigger": true
+  },
+  {
+    "query": "i need to build an org chart visualization for our 230-person company in d3.js. tried force-directed layout, looks like spaghetti. is there a better approach?",
+    "should_trigger": true
+  },
+  {
+    "query": "for a magazine article about wealth inequality im comparing the top 1% to the bottom 50% across countries. designer wants infographic-style. what visual encoding actually communicates the comparison honestly without being boring?",
+    "should_trigger": true
+  },
+  {
+    "query": "got a CSV with 18 months of daily sales data for 8 product lines (~4400 rows). marketing wants ONE chart that shows 'how each line is doing'. what would you put on the slide?",
+    "should_trigger": true
+  },
+  {
+    "query": "i need to write a SQL query that calculates the 7-day moving average of orders by product category from our orders table. table has order_id, product_id, category_id, ordered_at, quantity. what's the cleanest CTE pattern?",
+    "should_trigger": false
+  },
+  {
+    "query": "trying to optimize this bigquery query \u2014 it's scanning 4TB and costing us $200/day. how do i restructure the joins?\n```sql\nselect ... from events e join users u on e.uid = u.id where e.date > '2024-01-01'\n```",
+    "should_trigger": false
+  },
+  {
+    "query": "have a CSV with messy address strings ('123 Main St., Apt 4B, NYC 10001' format) and need to parse them into structured fields. what python library is best \u2014 usaddress, libpostal, or something else?",
+    "should_trigger": false
+  },
+  {
+    "query": "our airflow DAG has been failing intermittently on the 'load_to_warehouse' task. the error is 'connection timeout'. how do i make the task retry with exponential backoff?",
+    "should_trigger": false
+  },
+  {
+    "query": "im trying to add a search bar to my next.js site. it should search across blog posts and have keyboard shortcuts. any libraries you recommend? thinking algolia or maybe cmdk",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the difference between L1 and L2 regularization in scikit-learn's LogisticRegression? does setting penalty='elasticnet' actually help in practice?",
+    "should_trigger": false
+  },
+  {
+    "query": "i need to generate 10,000 rows of synthetic e-commerce order data for a load test. should have realistic distributions on order_value, ship_state, product_category. what's the best approach in python?",
+    "should_trigger": false
+  },
+  {
+    "query": "designing the figma mockups for our checkout flow redesign. trying to figure out where to put the trust badges so they're visible but don't compete with the CTA. any UX principles to keep in mind?",
+    "should_trigger": false
+  },
+  {
+    "query": "got a 28-page PDF of historical financial statements i need to extract tables from. tried tabula-py and the alignment is off. what works better for messy multi-column PDFs?",
+    "should_trigger": false
+  },
+  {
+    "query": "i'm putting together slides for our quarterly board meeting. the deck has ~30 slides total covering revenue, headcount, product launches, and a few key wins. any general advice on slide design / what makes a board deck good vs bad?",
+    "should_trigger": false
+  }
+]

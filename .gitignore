@@ -1,0 +1,42 @@
+# Source PDFs (copyrighted, large)
+*.pdf
+
+# Intermediate extraction artifacts
+bertin_chunks/
+tufte_chunks/
+*_chunks/
+*_full.txt
+chunks/
+pages/
+
+# Per-machine Claude Code config
+.claude/settings.local.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Node (if anyone adds tooling later)
+node_modules/
+
+# Local logs / temp
+*.log
+tmp/
+.tmp/

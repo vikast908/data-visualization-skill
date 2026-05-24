@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "cohort-retention-chart-choice",
+  "prompt": "I'm a data engineer at a SaaS company visualizing churn for our finance team's monthly board deck. I have 24 monthly signup cohorts × 12 observation months — it's triangular because cohort N can only be observed for 12-N months. I was going to do a heatmap but our designer wants 'something more polished'. What chart should I use?",
+  "assertions": [
+    {"text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)"},
+    {"text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)"},
+    {"text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration"},
+    {"text": "Specifies a sensible color scale for retention — sequential or diverging anchored on a target, NOT rainbow"},
+    {"text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)"}
+  ]
+}

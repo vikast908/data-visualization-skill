@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "choropleth-jenks-vs-quantiles",
+  "prompt": "I have COVID case rate per 100k people per US county for 2020-2023, and I want to make a choropleth map for an article showing 'America's hardest-hit counties'. Should I use Jenks natural breaks or quantiles for the color scale? My intuition is Jenks but my editor says quantiles look more 'honest'. Which is right?",
+  "assertions": [
+    {"text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')"},
+    {"text": "Explains what each scheme does perceptually and how it shapes the story the map tells"},
+    {"text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing"},
+    {"text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)"},
+    {"text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)"}
+  ]
+}

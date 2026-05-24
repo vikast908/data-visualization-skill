@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)",
+      "passed": true,
+      "evidence": "'Ship this instead: small-multiple retention curves, grouped by quarter. 8 panels (one per signup quarter, 2024 Q1 \u00e2\u2020\u2019 2025 Q4), arranged 2\u00c3\u20144 or 4\u00c3\u20142.'"
+    },
+    {
+      "text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)",
+      "passed": true,
+      "evidence": "'The triangular-data problem vanishes: recent cohorts just have shorter curves. No empty cells, no awkward void.'"
+    },
+    {
+      "text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration",
+      "passed": true,
+      "evidence": "'Your designer gets something that looks composed rather than computed.' Plus advice on identical axes, direct labels, no rainbow, no 3-D, no gradient fills, and explicit Y-axis scaling to avoid Lie-Factor."
+    },
+    {
+      "text": "Specifies a sensible color scale for retention \u00e2\u20ac\u201d sequential or diverging anchored on a target, NOT rainbow",
+      "passed": true,
+      "evidence": "'No rainbow colormap on the heatmap if your designer insists on keeping it \u00e2\u20ac\u201d viridis or a single-hue sequential at minimum'"
+    },
+    {
+      "text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)",
+      "passed": true,
+      "evidence": "Detailed design spec: '8 panels... X = months since signup (0\u00e2\u20ac\u201c12), Y = % retained. Each panel shows the 3 monthly cohorts in that quarter as thin gray lines, with the quarter's average overlaid darker.' Plus a table spec with column headers."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

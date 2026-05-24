@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "3d-bar-rainbow-critique",
+  "prompt": "Review this matplotlib code for our weekly active users chart on the exec dashboard. It's a 3D bar chart with weeks on X, product (Web/iOS/Android) on Y, and DAU on Z, with a rainbow colormap. Any problems?\n\n```python\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nfig = plt.figure(figsize=(8, 6))\nax = fig.add_subplot(111, projection='3d')\n\nweeks = np.arange(13)\nproducts = ['Web', 'iOS', 'Android']\nxs, ys = np.meshgrid(weeks, range(3))\nax.bar3d(xs.flatten(), ys.flatten(), 0,\n         0.8, 0.8, dau.flatten(), cmap='rainbow')\nax.set_xlabel('WEEK')\nax.set_ylabel('PRODUCT')\nax.set_zlabel('DAILY ACTIVE USERS')\nax.set_title('WEEKLY ACTIVE USERS')\nplt.show()\n```",
+  "assertions": [
+    {"text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)"},
+    {"text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)"},
+    {"text": "Identifies the all-caps labels as a stylistic issue"},
+    {"text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars"},
+    {"text": "Provides revised code OR a concrete, code-equivalent redesign description"}
+  ]
+}

@@ -1,0 +1,418 @@
+{
+  "metadata": {
+    "skill_name": "data-visualization",
+    "skill_path": "C:\\Users\\vikas\\.claude\\skills\\data-visualization",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-05-24T10:03:44Z",
+    "evals_run": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 55.8,
+        "tokens": 29066,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)",
+          "passed": true,
+          "evidence": "'Ship this instead: small-multiple retention curves, grouped by quarter. 8 panels (one per signup quarter, 2024 Q1 \u00e2\u2020\u2019 2025 Q4), arranged 2\u00c3\u20144 or 4\u00c3\u20142.'"
+        },
+        {
+          "text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)",
+          "passed": true,
+          "evidence": "'The triangular-data problem vanishes: recent cohorts just have shorter curves. No empty cells, no awkward void.'"
+        },
+        {
+          "text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration",
+          "passed": true,
+          "evidence": "'Your designer gets something that looks composed rather than computed.' Plus advice on identical axes, direct labels, no rainbow, no 3-D, no gradient fills, and explicit Y-axis scaling to avoid Lie-Factor."
+        },
+        {
+          "text": "Specifies a sensible color scale for retention \u00e2\u20ac\u201d sequential or diverging anchored on a target, NOT rainbow",
+          "passed": true,
+          "evidence": "'No rainbow colormap on the heatmap if your designer insists on keeping it \u00e2\u20ac\u201d viridis or a single-hue sequential at minimum'"
+        },
+        {
+          "text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)",
+          "passed": true,
+          "evidence": "Detailed design spec: '8 panels... X = months since signup (0\u00e2\u20ac\u201c12), Y = % retained. Each panel shows the 3 monthly cohorts in that quarter as thin gray lines, with the quarter's average overlaid darker.' Plus a table spec with column headers."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 90.0,
+        "tokens": 30609,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)",
+          "passed": true,
+          "evidence": "'3D bars on a 2D screen lie about the numbers. ... Bars in the back row are foreshortened, bars in the front row are not, and bars in the middle row are partially occluded by the front row.'"
+        },
+        {
+          "text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)",
+          "passed": true,
+          "evidence": "'rainbow is the worst choice for a quantity: hue has no perceptual order (Bertin: color is selective but not ordered, and not quantitative at all). Viewers cannot rank rainbow colors by value without consulting the legend.'"
+        },
+        {
+          "text": "Identifies the all-caps labels as a stylistic issue",
+          "passed": true,
+          "evidence": "'ALL CAPS labels. Tufte calls these the \"computer duck\" \u00e2\u20ac\u201d they read slower and add nothing. Use mixed case.'"
+        },
+        {
+          "text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars",
+          "passed": true,
+          "evidence": "'a small multiple of range-framed line charts (one panel per product, shared Y scale so they're comparable), or a single line chart with three directly-labeled lines'"
+        },
+        {
+          "text": "Provides revised code OR a concrete, code-equivalent redesign description",
+          "passed": true,
+          "evidence": "Provides two complete matplotlib code blocks: one for direct-labeled line chart and one for small-multiples panels."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 76.5,
+        "tokens": 29299,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')",
+          "passed": true,
+          "evidence": "'use neither as your default \u00e2\u20ac\u201d use a perceptually-uniform sequential scale with a small number of fixed, meaningful breakpoints... If you must pick one of the two, quantiles \u00e2\u20ac\u201d but understand what you're giving up.' A clear recommendation."
+        },
+        {
+          "text": "Explains what each scheme does perceptually and how it shapes the story the map tells",
+          "passed": true,
+          "evidence": "'Jenks optimizes within-class homogeneity. It will find the \"natural\" cliffs in your dataset...' vs 'Quantiles guarantee equal-area color usage \u00e2\u20ac\u201d every bin has the same number of counties. The map will always look dramatic.' Plus a comparison table."
+        },
+        {
+          "text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing",
+          "passed": true,
+          "evidence": "'Choropleths take a quantitative variable (cases per 100k) and convert it into an ordered one (5 or 7 bins). Bertin calls this \"transforming Q into O\" and warns it's fine for communication of a known message, dishonest for discovery.' Explicitly notes loss of quantitative resolution."
+        },
+        {
+          "text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)",
+          "passed": true,
+          "evidence": "'Counties with < ~1,000 residents: consider suppressing or visually muting. Rate denominators that small produce noise that dominates color, and the noise lives in places like rural Nebraska that will hijack \"hardest-hit\" framing.' Plus 'COVID rates have a long right tail.'"
+        },
+        {
+          "text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)",
+          "passed": true,
+          "evidence": "'Your headline is \"America's hardest-hit counties.\" That is a message graphic (Bertin's term) \u00e2\u20ac\u201d memorizable, one-glance, communicating a known finding. It is not a discovery/processing graphic.'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 91.9,
+        "tokens": 29725,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges",
+          "passed": true,
+          "evidence": "'So the dashboard is one big sorted table with sparklines, supported by two diagnostic charts. Not six KPI tiles across the top.' The table is ~80% of the screen, sortable, defaulted to risk-score descending."
+        },
+        {
+          "text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts",
+          "passed": true,
+          "evidence": "'NPS (90d) | number + a 1-row sparkline of the last ~6 surveys', 'Open tickets | number; small dot-plot beside it of last 8 weeks', 'MRR rank percentile | tiny inline bar', plus '6-cell heat strip' on Risk score."
+        },
+        {
+          "text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) \u00e2\u20ac\u201d not just 'show the data'",
+          "passed": true,
+          "evidence": "Provides a defined Risk Score formula: 'risk = 0.30 * z(days_since_last_login) + 0.25 * z(-nps_90d) + 0.20 * z(open_tickets) + 0.15 * z(-days_to_renewal) + 0.10 * z(mrr)'"
+        },
+        {
+          "text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR \u00c3\u2014 login recency, ticket spike heatmap)",
+          "passed": true,
+          "evidence": "'Panel A \u00e2\u20ac\u201d Renewal-risk scatter... X: days to renewal, Y: risk score, Mark size: MRR' and 'Panel B \u00e2\u20ac\u201d Small multiples of NPS trend, faceted by MRR tier.'"
+        },
+        {
+          "text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars",
+          "passed": true,
+          "evidence": "'No KPI tiles at the top. \"Avg MRR: $4,800\" answers nothing CS can act on. A KPI tile is a message construction misused for a processing task. No gauges, donuts, or pie charts...'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 75.9,
+        "tokens": 20821,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)",
+          "passed": true,
+          "evidence": "'A retention curves overlay (small set of cohorts as lines, x = months since signup) as the hero chart.' Also mentions 'Small multiples (4 rows x 6 cols of mini line charts, one per cohort)' as a variation."
+        },
+        {
+          "text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)",
+          "passed": true,
+          "evidence": "'Leave the lower triangle truly empty (no gray fill, no \"N/A\"). The diagonal edge is information.' and 'The triangular structure disappears entirely because every cohort starts at month 0.'"
+        },
+        {
+          "text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration",
+          "passed": true,
+          "evidence": "'Treat it as a table first, color second \u00e2\u20ac\u201d this is the Tufte-style move and what designers usually mean by \"polished\"' followed by guidance on tabular numerals, right-aligned numbers, narrow color range, no gridlines."
+        },
+        {
+          "text": "Specifies a sensible color scale for retention \u00e2\u20ac\u201d sequential or diverging anchored on a target, NOT rainbow",
+          "passed": true,
+          "evidence": "'Use a muted, narrow-range color scale (e.g., a single hue from white to a brand color, mapped to the 60\u00e2\u20ac\u201c100% range, not 0\u00e2\u20ac\u201c100%). Don't use red-green diverging' and 'Don't use viridis on a board deck.'"
+        },
+        {
+          "text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)",
+          "passed": true,
+          "evidence": "Concrete slide structure: 'Hero chart: Option A (retention curves overlay), one sentence headline... Reference table: Option B (triangular table-heatmap)... Footnote: cohort definition...'"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 54.8,
+        "tokens": 20982,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)",
+          "passed": true,
+          "evidence": "'Occlusion: bars hide other bars... No shared baseline... Perspective distortion: a bar in the back looks shorter than an equal bar in the front.'"
+        },
+        {
+          "text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)",
+          "passed": true,
+          "evidence": "'Rainbow colormap: not perceptually uniform, not colorblind-safe, and here it would be encoding a value (height) that's already encoded by height - redundant and misleading because rainbow implies ordering that doesn't match the data.'"
+        },
+        {
+          "text": "Identifies the all-caps labels as a stylistic issue",
+          "passed": false,
+          "evidence": "Not addressed in the response. The all-caps labels (WEEK, PRODUCT, DAILY ACTIVE USERS, WEEKLY ACTIVE USERS) are silently fixed in the rewritten code but never flagged as an issue."
+        },
+        {
+          "text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars",
+          "passed": true,
+          "evidence": "'I'd scrap the 3D bar approach for an exec dashboard and use small multiples or a slope/line chart.' Provides 2D line chart with three labeled series."
+        },
+        {
+          "text": "Provides revised code OR a concrete, code-equivalent redesign description",
+          "passed": true,
+          "evidence": "Provides full matplotlib code block for the recommended 2D line chart with direct end-labels, and a second code block for a fixed 3D version with viridis."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 57.0,
+        "tokens": 20258,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')",
+          "passed": true,
+          "evidence": "'Use quantiles. Your editor is right.' Unambiguous recommendation."
+        },
+        {
+          "text": "Explains what each scheme does perceptually and how it shapes the story the map tells",
+          "passed": true,
+          "evidence": "'Jenks optimizes for within-class similarity... Quantiles guarantee an equal number of counties in each color bin... Jenks will spend most of its breakpoints isolating those outliers, leaving 90%+ of the country in one or two indistinguishable colors.'"
+        },
+        {
+          "text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing",
+          "passed": false,
+          "evidence": "Does not mention alternatives like proportional symbols, dot density, or hex bins. The 'annotation layer' for top-10 counties is within-choropleth, not an alternative form. Does not explicitly frame pre-classing as loss of quantitative resolution either."
+        },
+        {
+          "text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)",
+          "passed": true,
+          "evidence": "'US county COVID rates are heavily right-skewed (a few rural counties had catastrophic per-capita rates because of small denominators)...' Plus 'Handle the outliers explicitly. Because quantiles can hide a county that's 5x worse than the next, add an annotation layer.' Also suggests population-weighted quantiles."
+        },
+        {
+          "text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)",
+          "passed": true,
+          "evidence": "'Jenks is the right call when: You're doing analysis, not communication... You're highlighting clusters in the data itself.' Distinguishes communication vs analytical/exploratory framing."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5,
+        "time_seconds": 64.9,
+        "tokens": 20870,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges",
+          "passed": false,
+          "evidence": "The table is Zone 3 (bottom), with KPI tiles as Zone 1 and a scatter as the 'centerpiece' Zone 2. 'Zone 1 (top strip) \u00e2\u20ac\u201d Health Triage Scorecards: A row of 4 single-value tiles.' and 'Zone 2 (middle) \u00e2\u20ac\u201d The Risk Matrix (the centerpiece).' The table is not the primary view, and KPI tiles are explicitly recommended."
+        },
+        {
+          "text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts",
+          "passed": true,
+          "evidence": "'MRR \u00e2\u20ac\u201d right-aligned, with a tiny inline bar (Looker's html: formatter) for at-a-glance scale', 'Days since login \u00e2\u20ac\u201d heatmap cell: green 0-7, yellow 8-30, red 31+', plus 'Sparkline column in the table for NPS trend last 4 quarters.'"
+        },
+        {
+          "text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) \u00e2\u20ac\u201d not just 'show the data'",
+          "passed": true,
+          "evidence": "Provides full LookML risk_score formula: '(days_since_login / 7) + (90 - nps_score) / 10 + (open_tickets * 2) + (case when days_to_renewal < 90 then 20 else 0 end) + log(mrr)'"
+        },
+        {
+          "text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR \u00c3\u2014 login recency, ticket spike heatmap)",
+          "passed": true,
+          "evidence": "'Scatter plot, full width... X-axis: Days since last login... Y-axis: MRR per account (log scale)... Dot color: NPS bucket... Dot size: Open support tickets... Dot border: Bold red ring if contract renews in < 90 days.'"
+        },
+        {
+          "text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars",
+          "passed": false,
+          "evidence": "Explicitly recommends KPI tiles ('A row of 4 single-value tiles'). Discourages pie charts and gauges ('No pie charts anywhere... No gauges for the headline metrics'), but actively endorses bare KPI tiles, which the assertion calls out."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 78.55,
+        "stddev": 16.6442,
+        "min": 55.8,
+        "max": 91.9
+      },
+      "tokens": {
+        "mean": 29674.75,
+        "stddev": 679.9786,
+        "min": 29066,
+        "max": 30609
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.8,
+        "stddev": 0.1633,
+        "min": 0.6,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 63.15,
+        "stddev": 9.5424,
+        "min": 54.8,
+        "max": 75.9
+      },
+      "tokens": {
+        "mean": 20732.75,
+        "stddev": 323.5938,
+        "min": 20258,
+        "max": 20982
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.20",
+      "time_seconds": "+15.4",
+      "tokens": "+8942"
+    }
+  },
+  "notes": [
+    "With-skill: 100% pass rate (20/20). Without-skill: 80% (16/20). Delta +20%.",
+    "The skill was most discriminating on eval-4 (CS dashboard, 5/5 vs 3/5): the baseline organized the dashboard around KPI tiles + scatter + table, missing the table-as-primary-view and KPI-tiles-discouraged assertions. With-skill correctly led with sorted-table-with-sparklines and explicitly rejected KPI tiles as a message construction misused for a processing task.",
+    "Eval-2 (3D bar) and eval-3 (choropleth) each showed a +1 delta. Both involved second-order critiques: the all-caps labels callout (eval-2) and the loss-of-quantitative-resolution Bertin Q->O critique (eval-3). The baseline reaches the correct topline answer but skips the systematic critique.",
+    "Eval-1 (cohort retention) was 5/5 for both. The baseline is unusually strong here \u2014 it independently mentioned semi-graphic tables, retention-curve overlays, and tool-specific advice (great_tables, Altair). The skill did not lose this eval but did not measurably gain either.",
+    "Token cost: with-skill averaged 29.7K tokens, without-skill 20.7K \u2014 a ~43% token premium for the skill. Time was roughly comparable (78s vs 63s avg).",
+    "Implication: the skill's value is largely in pushing the model toward second-order rigor (typography, function-fit, systematic anti-patterns) rather than first-order chart-type selection, which the baseline already handles well.",
+    "No assertion was satisfied by neither condition \u2014 the test set may be too easy. Future iterations could add harder edge cases (e.g., adversarial requests like \"make my pie chart look better\" where the right answer is to refuse the form)."
+  ]
+}

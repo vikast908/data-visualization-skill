@@ -1,0 +1,12 @@
+{
+  "eval_id": 4,
+  "eval_name": "cs-dashboard-at-risk-accounts",
+  "prompt": "I'm building a new Looker dashboard for our customer success team. They need to spot at-risk accounts quickly. We have ~500 active accounts, and for each I have: MRR per account, last login date, NPS score (last 90 days), open support tickets count, contract renewal date. How should I lay this out?",
+  "assertions": [
+    {"text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges"},
+    {"text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts"},
+    {"text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) — not just 'show the data'"},
+    {"text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR × login recency, ticket spike heatmap)"},
+    {"text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars"}
+  ]
+}

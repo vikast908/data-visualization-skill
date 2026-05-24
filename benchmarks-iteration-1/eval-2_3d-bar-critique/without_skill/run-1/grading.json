@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)",
+      "passed": true,
+      "evidence": "'Occlusion: bars hide other bars... No shared baseline... Perspective distortion: a bar in the back looks shorter than an equal bar in the front.'"
+    },
+    {
+      "text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)",
+      "passed": true,
+      "evidence": "'Rainbow colormap: not perceptually uniform, not colorblind-safe, and here it would be encoding a value (height) that's already encoded by height - redundant and misleading because rainbow implies ordering that doesn't match the data.'"
+    },
+    {
+      "text": "Identifies the all-caps labels as a stylistic issue",
+      "passed": false,
+      "evidence": "Not addressed in the response. The all-caps labels (WEEK, PRODUCT, DAILY ACTIVE USERS, WEEKLY ACTIVE USERS) are silently fixed in the rewritten code but never flagged as an issue."
+    },
+    {
+      "text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars",
+      "passed": true,
+      "evidence": "'I'd scrap the 3D bar approach for an exec dashboard and use small multiples or a slope/line chart.' Provides 2D line chart with three labeled series."
+    },
+    {
+      "text": "Provides revised code OR a concrete, code-equivalent redesign description",
+      "passed": true,
+      "evidence": "Provides full matplotlib code block for the recommended 2D line chart with direct end-labels, and a second code block for a fixed 3D version with viridis."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends a table-as-primary-view (sortable rows = accounts) rather than a wall of separate KPI tiles or gauges",
+      "passed": true,
+      "evidence": "'So the dashboard is one big sorted table with sparklines, supported by two diagnostic charts. Not six KPI tiles across the top.' The table is ~80% of the screen, sortable, defaulted to risk-score descending."
+    },
+    {
+      "text": "Includes in-cell visual elements (sparklines, inline bars, dot-plots, or color encoding within the table) rather than separate charts",
+      "passed": true,
+      "evidence": "'NPS (90d) | number + a 1-row sparkline of the last ~6 surveys', 'Open tickets | number; small dot-plot beside it of last 8 weeks', 'MRR rank percentile | tiny inline bar', plus '6-cell heat strip' on Risk score."
+    },
+    {
+      "text": "Identifies concrete at-risk signals to compute (e.g., NPS drop, ticket spike, login dormancy, near renewal date) \u00e2\u20ac\u201d not just 'show the data'",
+      "passed": true,
+      "evidence": "Provides a defined Risk Score formula: 'risk = 0.30 * z(days_since_last_login) + 0.25 * z(-nps_90d) + 0.20 * z(open_tickets) + 0.15 * z(-days_to_renewal) + 0.10 * z(mrr)'"
+    },
+    {
+      "text": "Optionally proposes a secondary scatter or small-multiple view for discovery (e.g., MRR \u00c3\u2014 login recency, ticket spike heatmap)",
+      "passed": true,
+      "evidence": "'Panel A \u00e2\u20ac\u201d Renewal-risk scatter... X: days to renewal, Y: risk score, Mark size: MRR' and 'Panel B \u00e2\u20ac\u201d Small multiples of NPS trend, faceted by MRR tier.'"
+    },
+    {
+      "text": "Discourages bare KPI tiles, gauges, donuts, or 3D bars",
+      "passed": true,
+      "evidence": "'No KPI tiles at the top. \"Avg MRR: $4,800\" answers nothing CS can act on. A KPI tile is a message construction misused for a processing task. No gauges, donuts, or pie charts...'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

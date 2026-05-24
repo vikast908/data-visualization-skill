@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Gives a decisive recommendation between Jenks and quantiles (not just 'it depends')",
+      "passed": true,
+      "evidence": "'use neither as your default \u00e2\u20ac\u201d use a perceptually-uniform sequential scale with a small number of fixed, meaningful breakpoints... If you must pick one of the two, quantiles \u00e2\u20ac\u201d but understand what you're giving up.' A clear recommendation."
+    },
+    {
+      "text": "Explains what each scheme does perceptually and how it shapes the story the map tells",
+      "passed": true,
+      "evidence": "'Jenks optimizes within-class homogeneity. It will find the \"natural\" cliffs in your dataset...' vs 'Quantiles guarantee equal-area color usage \u00e2\u20ac\u201d every bin has the same number of counties. The map will always look dramatic.' Plus a comparison table."
+    },
+    {
+      "text": "Raises at least one alternative to a pre-classed choropleth (proportional symbols, dot density, dasymetric, bivariate, or hex bins) OR notes the loss of quantitative resolution when pre-classing",
+      "passed": true,
+      "evidence": "'Choropleths take a quantitative variable (cases per 100k) and convert it into an ordered one (5 or 7 bins). Bertin calls this \"transforming Q into O\" and warns it's fine for communication of a known message, dishonest for discovery.' Explicitly notes loss of quantitative resolution."
+    },
+    {
+      "text": "Addresses the skewed distribution of county case rates (log scale, outlier handling, or trimming the legend)",
+      "passed": true,
+      "evidence": "'Counties with < ~1,000 residents: consider suppressing or visually muting. Rate denominators that small produce noise that dominates color, and the noise lives in places like rural Nebraska that will hijack \"hardest-hit\" framing.' Plus 'COVID rates have a long right tail.'"
+    },
+    {
+      "text": "Notes the communication-vs-discovery framing (for an *article*, the goal is communication, which sometimes warrants Jenks's natural-break narrative)",
+      "passed": true,
+      "evidence": "'Your headline is \"America's hardest-hit counties.\" That is a message graphic (Bertin's term) \u00e2\u20ac\u201d memorizable, one-glance, communicating a known finding. It is not a discovery/processing graphic.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

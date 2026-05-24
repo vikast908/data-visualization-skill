@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Defends the heatmap or recommends small-multiples cohort retention curves (not a 3D surface, not a pie chart, not a single averaged line)",
+      "passed": true,
+      "evidence": "'A retention curves overlay (small set of cohorts as lines, x = months since signup) as the hero chart.' Also mentions 'Small multiples (4 rows x 6 cols of mini line charts, one per cohort)' as a variation."
+    },
+    {
+      "text": "Explicitly addresses how to handle the triangular shape / missing cells (greyed out, NaN, diagonal cutoff)",
+      "passed": true,
+      "evidence": "'Leave the lower triangle truly empty (no gray fill, no \"N/A\"). The diagonal edge is information.' and 'The triangular structure disappears entirely because every cohort starts at month 0.'"
+    },
+    {
+      "text": "Reframes 'polish' as data presentation craft (typography, spacing, color scale) rather than chartjunk/decoration",
+      "passed": true,
+      "evidence": "'Treat it as a table first, color second \u00e2\u20ac\u201d this is the Tufte-style move and what designers usually mean by \"polished\"' followed by guidance on tabular numerals, right-aligned numbers, narrow color range, no gridlines."
+    },
+    {
+      "text": "Specifies a sensible color scale for retention \u00e2\u20ac\u201d sequential or diverging anchored on a target, NOT rainbow",
+      "passed": true,
+      "evidence": "'Use a muted, narrow-range color scale (e.g., a single hue from white to a brand color, mapped to the 60\u00e2\u20ac\u201c100% range, not 0\u00e2\u20ac\u201c100%). Don't use red-green diverging' and 'Don't use viridis on a board deck.'"
+    },
+    {
+      "text": "Provides at least one concrete actionable next step (revised chart description, code, or design spec)",
+      "passed": true,
+      "evidence": "Concrete slide structure: 'Hero chart: Option A (retention curves overlay), one sentence headline... Reference table: Option B (triangular table-heatmap)... Footnote: cohort definition...'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

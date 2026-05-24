@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies the 3D projection as a problem (occlusion, perspective distortion, or hard to read)",
+      "passed": true,
+      "evidence": "'3D bars on a 2D screen lie about the numbers. ... Bars in the back row are foreshortened, bars in the front row are not, and bars in the middle row are partially occluded by the front row.'"
+    },
+    {
+      "text": "Identifies the rainbow colormap as a problem (not perceptually uniform, not ordered, or confusing)",
+      "passed": true,
+      "evidence": "'rainbow is the worst choice for a quantity: hue has no perceptual order (Bertin: color is selective but not ordered, and not quantitative at all). Viewers cannot rank rainbow colors by value without consulting the legend.'"
+    },
+    {
+      "text": "Identifies the all-caps labels as a stylistic issue",
+      "passed": true,
+      "evidence": "'ALL CAPS labels. Tufte calls these the \"computer duck\" \u00e2\u20ac\u201d they read slower and add nothing. Use mixed case.'"
+    },
+    {
+      "text": "Recommends flattening to 2D: small multiples by product OR single 2D chart with 3 labeled series OR grouped bars",
+      "passed": true,
+      "evidence": "'a small multiple of range-framed line charts (one panel per product, shared Y scale so they're comparable), or a single line chart with three directly-labeled lines'"
+    },
+    {
+      "text": "Provides revised code OR a concrete, code-equivalent redesign description",
+      "passed": true,
+      "evidence": "Provides two complete matplotlib code blocks: one for direct-labeled line chart and one for small-multiples panels."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
